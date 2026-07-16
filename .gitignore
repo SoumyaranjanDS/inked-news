@@ -1,0 +1,82 @@
+# ─── Node.js & Dependencies ──────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ─── Environment Variables (Sensitive!) ────────────────
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+
+# ─── React Native / Expo (inked app) ───────────────────
+.expo/
+*.jks
+*.p8
+*.mobileprovision
+*.orig.*
+android/app/build/
+android/build/
+android/.gradle/
+ios/build/
+ios/Pods/
+
+# ─── Python (Scrapers & Optimizer) ─────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.venv/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# ─── Logs & Databases ──────────────────────────────────
+*.log
+logs/
+*.sqlite
+*.sqlite3
+
+# ─── Web Builds (inked-website) ────────────────────────
+dist/
+dist-ssr/
+build/
+.next/
+
+# ─── OS & IDE Files ────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.vscode/
+.idea/
+
+# ─── Custom User Files ─────────────────────────────────
+credentials.txt
+NewsPulse_Case_Study_Extracted_utf8.txt
+NewsPulse_Case_Study_Extracted.txt
+NewsPulse_Case_Study.docx

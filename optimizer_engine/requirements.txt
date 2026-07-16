@@ -1,0 +1,7 @@
+google-genai
+pymongo
+python-dotenv
+schedule
+
+fastapi
+uvicorn

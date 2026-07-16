@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* ── Brand Token System ────────────────────────────────────────────────── */
+:root {
+  --ink-black:     #000000;
+  --paper:         #FFFFFF;
+  --masthead-red:  #C1272D;
+  --deep-red:      #8B1E1E;
+  --rule-gray:     #E5E7EB;
+  --caption-gray:  #6B7280;
+
+  /* Semantic aliases */
+  --bg:            var(--paper);
+  --text:          var(--ink-black);
+  --text-muted:    var(--caption-gray);
+  --border:        var(--rule-gray);
+  --accent:        var(--masthead-red);
+  --accent-hover:  var(--deep-red);
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Typography ────────────────────────────────────────────────────────── */
+.font-serif    { font-family: 'Playfair Display', Georgia, serif; }
+.font-sans     { font-family: 'Inter', sans-serif; }
+
+.eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* ── Layout signature: hairline rules ─────────────────────────────────── */
+.rule        { border: none; border-top: 1px solid var(--rule-gray); }
+.rule-heavy  { border: none; border-top: 2px solid var(--ink-black); }
+.rule-red    { border: none; border-top: 2px solid var(--masthead-red); }
+
+/* ── Buttons ────────────────────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--masthead-red);
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background 0.18s ease;
+}
+.btn-primary:hover { background: var(--deep-red); }
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--ink-black);
+  cursor: pointer;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.btn-outline:hover {
+  background: var(--ink-black);
+  color: var(--paper);
+}
+
+/* ── Section spacing ───────────────────────────────────────────────────── */
+.section { padding: 4rem 0; }
+.section-sm { padding: 2.5rem 0; }
+.container { max-width: 1140px; margin: 0 auto; padding: 0 1.5rem; }
+
+/* ── Form inputs ───────────────────────────────────────────────────────── */
+input[type="email"],
+input[type="text"],
+textarea,
+select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--rule-gray);
+  border-radius: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--masthead-red);
+}
+
+/* ── Badge ───────────────────────────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  background: var(--masthead-red);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.75rem;
+}
