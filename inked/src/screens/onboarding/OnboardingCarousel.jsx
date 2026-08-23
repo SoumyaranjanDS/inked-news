@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+ï»¿import React, { useRef, useEffect } from 'react';
 import {
   StyleSheet, Text, View, StatusBar, Animated,
   Dimensions, TouchableOpacity, ScrollView,
@@ -6,6 +6,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { Zap, Globe2, Brain } from 'lucide-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
@@ -26,6 +27,15 @@ const OnboardingCarousel = ({ navigation }) => {
       Animated.timing(slideAnim, { toValue: 0, duration: 700, useNativeDriver: true }),
     ]).start();
   }, []);
+
+  const handleGetStarted = async () => {
+    try {
+      await AsyncStorage.setItem('hasLaunched', 'true');
+    } catch (e) {
+      console.log('Error saving hasLaunched state:', e);
+    }
+    navigation.replace('Main');
+  };
 
   return (
     <View style={styles.container}>
@@ -52,7 +62,7 @@ const OnboardingCarousel = ({ navigation }) => {
         </View>
 
         <Text style={styles.headline}>Your news,{'\n'}your way.</Text>
-        <Text style={styles.sub}>The smarter way to stay on top of what matters — personalised, fast, and beautifully presented.</Text>
+        <Text style={styles.sub}>The smarter way to stay on top of what matters - personalised, fast, and beautifully presented.</Text>
 
         {/* Features */}
         <View style={styles.featureList}>
@@ -78,7 +88,7 @@ const OnboardingCarousel = ({ navigation }) => {
         <TouchableOpacity
           style={styles.ctaButton}
           activeOpacity={0.85}
-          onPress={() => navigation.replace('Main')}
+          onPress={handleGetStarted}
         >
           <Text style={styles.ctaText}>Get Started</Text>
         </TouchableOpacity>
@@ -92,9 +102,7 @@ export default OnboardingCarousel;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0D0D0D' },
-  topGlow: {
-    position: 'absolute', top: 0, left: 0, right: 0, height: height * 0.4,
-  },
+  topGlow: { position: 'absolute', top: 0, left: 0, right: 0, height: height * 0.4 },
   content: { flex: 1, paddingHorizontal: 28 },
   logoRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 40 },
   logoCircle: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#D32F2F', justifyContent: 'center', alignItems: 'center', marginRight: 10 },

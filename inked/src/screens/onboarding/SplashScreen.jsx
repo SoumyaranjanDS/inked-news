@@ -10,6 +10,8 @@ import {
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const { width, height } = Dimensions.get('window');
 const AnimatedGradient = Animated.createAnimatedComponent(LinearGradient);
 
@@ -23,55 +25,42 @@ const SplashScreen = ({ navigation }) => {
   const exitOpacity = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
+    // Start animation immediately
     Animated.sequence([
       Animated.parallel([
-        Animated.timing(glowOpacity, {
-          toValue: 0.7,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-        Animated.timing(glowScale, {
-          toValue: 1,
-          duration: 900,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: true,
-        }),
+        Animated.timing(glowOpacity, { toValue: 0.7, duration: 700, useNativeDriver: true }),
+        Animated.timing(glowScale, { toValue: 1, duration: 900, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
       ]),
       Animated.parallel([
-        Animated.spring(logoScale, {
-          toValue: 1,
-          friction: 5,
-          tension: 80,
-          useNativeDriver: true,
-        }),
-        Animated.timing(logoOpacity, {
-          toValue: 1,
-          duration: 400,
-          useNativeDriver: true,
-        }),
+        Animated.spring(logoScale, { toValue: 1, friction: 5, tension: 80, useNativeDriver: true }),
+        Animated.timing(logoOpacity, { toValue: 1, duration: 400, useNativeDriver: true }),
       ]),
       Animated.parallel([
-        Animated.timing(taglineOpacity, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-        Animated.timing(taglineY, {
-          toValue: 0,
-          duration: 500,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: true,
-        }),
+        Animated.timing(taglineOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
+        Animated.timing(taglineY, { toValue: 0, duration: 500, easing: Easing.out(Easing.cubic), useNativeDriver: true }),
       ]),
-    ]).start(() => {
-      setTimeout(() => {
-        Animated.timing(exitOpacity, {
-          toValue: 0,
-          duration: 400,
-          useNativeDriver: true,
-        }).start(() => navigation.replace('OnboardingCarousel'));
-      }, 1400);
-    });
+    ]).start();
+
+    // In parallel, figure out routing after a minimum display time
+    const checkOnboarding = async () => {
+      try {
+        const hasLaunched = await AsyncStorage.getItem('hasLaunched');
+        setTimeout(() => {
+          Animated.timing(exitOpacity, { toValue: 0, duration: 400, useNativeDriver: true }).start(() => {
+            if (hasLaunched === 'true') {
+              navigation.replace('Main');
+            } else {
+              navigation.replace('OnboardingCarousel');
+            }
+          });
+        }, 1400); // Ensures splash shows for at least 1.4s
+      } catch (err) {
+        // Fallback to onboarding if storage fails
+        setTimeout(() => navigation.replace('OnboardingCarousel'), 1400);
+      }
+    };
+
+    checkOnboarding();
   }, [navigation]);
 
   return (
