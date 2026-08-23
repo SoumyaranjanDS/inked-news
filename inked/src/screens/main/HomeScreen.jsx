@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   StyleSheet, Text, View, Image, TouchableOpacity,
   ActivityIndicator, RefreshControl, StatusBar, Dimensions,
-  ScrollView, PanResponder, Animated,
+  ScrollView, PanResponder, Animated, useColorScheme
 } from 'react-native';
 import { MAIN_BACKEND_URL } from '@env';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -35,34 +35,34 @@ const TrendingCard = ({ item, onPress }) => (
   </TouchableOpacity>
 );
 
-const ArticleCard = ({ item, onPress }) => {
+const ArticleCard = ({ item, onPress, isDark }) => {
   const src = item.source || 'N';
   const init = src.charAt(0).toUpperCase();
   const time = formatTime(item.date, item.time);
   return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.92} onPress={onPress}>
+    <TouchableOpacity style={[styles.card, { backgroundColor: isDark ? '#1A1A1A' : '#FFF' }]} activeOpacity={0.92} onPress={onPress}>
       <View style={styles.cardHeader}>
         <View style={styles.sourceInfo}>
           <View style={styles.sourceLogo}><Text style={styles.sourceLogoText}>{init}</Text></View>
           <View>
             <View style={styles.sourceNameRow}>
-              <Text style={styles.sourceName}>{src}</Text>
+              <Text style={[styles.sourceName, { color: isDark ? '#FFF' : '#111' }]}>{src}</Text>
               <CheckCircle2 size={13} color="#007AFF" fill="#E5F0FF" style={{ marginLeft: 4 }} />
             </View>
             <Text style={styles.timeText}>{time}</Text>
           </View>
         </View>
-        <TouchableOpacity style={styles.moreBtn}><MoreHorizontal size={18} color="#999" /></TouchableOpacity>
+        <TouchableOpacity style={[styles.moreBtn, { backgroundColor: isDark ? '#333' : '#F7F7F7' }]}><MoreHorizontal size={18} color={isDark ? '#FFF' : '#999'} /></TouchableOpacity>
       </View>
-      <Text style={styles.cardHeadline} numberOfLines={3}>{item.headline}</Text>
-      {item.image_link ? <Image source={{ uri: item.image_link }} style={styles.cardImage} /> : <View style={[styles.cardImage, { backgroundColor: '#F3F3F3' }]} />}
+      <Text style={[styles.cardHeadline, { color: isDark ? '#FFF' : '#111' }]} numberOfLines={3}>{item.headline}</Text>
+      {item.image_link ? <Image source={{ uri: item.image_link }} style={styles.cardImage} /> : <View style={[styles.cardImage, { backgroundColor: isDark ? '#333' : '#F3F3F3' }]} />}
       <View style={styles.actionRow}>
         <View style={styles.actionGroup}>
-          <View style={styles.actionPill}><Heart size={14} color="#666" /><Text style={styles.actionText}>{item.likes}</Text></View>
-          <View style={styles.actionPill}><MessageCircle size={14} color="#666" /><Text style={styles.actionText}>{item.comments}</Text></View>
-          <View style={styles.actionPill}><Eye size={14} color="#666" /><Text style={styles.actionText}>{item.views}</Text></View>
+          <View style={[styles.actionPill, { backgroundColor: isDark ? '#333' : '#F5F5F5' }]}><Heart size={14} color={isDark ? '#DDD' : '#666'} /><Text style={[styles.actionText, { color: isDark ? '#DDD' : '#555' }]}>{item.likes}</Text></View>
+          <View style={[styles.actionPill, { backgroundColor: isDark ? '#333' : '#F5F5F5' }]}><MessageCircle size={14} color={isDark ? '#DDD' : '#666'} /><Text style={[styles.actionText, { color: isDark ? '#DDD' : '#555' }]}>{item.comments}</Text></View>
+          <View style={[styles.actionPill, { backgroundColor: isDark ? '#333' : '#F5F5F5' }]}><Eye size={14} color={isDark ? '#DDD' : '#666'} /><Text style={[styles.actionText, { color: isDark ? '#DDD' : '#555' }]}>{item.views}</Text></View>
         </View>
-        <TouchableOpacity style={styles.sharePill}><Share size={14} color="#666" /></TouchableOpacity>
+        <TouchableOpacity style={[styles.sharePill, { backgroundColor: isDark ? '#333' : '#F5F5F5' }]}><Share size={14} color={isDark ? '#DDD' : '#666'} /></TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
@@ -166,17 +166,19 @@ const ForYouStack = ({ items, onPress, onSwipeStart, onSwipeEnd }) => {
   );
 };
 
-const SectionHeader = ({ title, icon: Icon, color = '#111', onSeeAll }) => (
+const SectionHeader = ({ title, icon: Icon, color = '#111', onSeeAll, isDark }) => (
   <View style={styles.sectionHead}>
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-      {Icon && <Icon size={18} color={color} />}
-      <Text style={[styles.sectionTitle, { color }]}>{title}</Text>
+      {Icon && <Icon size={18} color={color === '#111' && isDark ? '#FFF' : color} />}
+      <Text style={[styles.sectionTitle, { color: color === '#111' && isDark ? '#FFF' : color }]}>{title}</Text>
     </View>
     {onSeeAll && <TouchableOpacity onPress={onSeeAll}><Text style={styles.seeAll}>See All</Text></TouchableOpacity>}
   </View>
 );
 
 const HomeScreen = ({ navigation }) => {
+  const theme = useColorScheme();
+  const isDark = theme === 'dark';
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -206,8 +208,8 @@ const HomeScreen = ({ navigation }) => {
   const onRefresh = useCallback(() => { setRefreshing(true); fetchFeed(); }, []);
 
   if (loading) return (
-    <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
+    <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', backgroundColor: isDark ? '#0D0D0D' : '#F5F5F5' }]}>
+      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor="transparent" translucent />
       <ActivityIndicator size="large" color="#D32F2F" />
     </View>
   );
@@ -219,8 +221,8 @@ const HomeScreen = ({ navigation }) => {
   const NAV_HEIGHT = 80 + insets.bottom;
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
+    <View style={[styles.container, { backgroundColor: isDark ? '#0D0D0D' : '#F5F5F5' }]}>
+      <StatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor="transparent" translucent />
       <ScrollView
         ref={scrollRef}
         scrollEnabled={scrollEnabled}
@@ -232,41 +234,41 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.header}>
           <Text style={styles.headerLogo}>inked.</Text>
           <View style={styles.headerRight}>
-            <TouchableOpacity style={styles.headerIcon}><Bookmark size={20} color="#111" /></TouchableOpacity>
-            <TouchableOpacity style={styles.headerIcon}><Bell size={20} color="#111" /></TouchableOpacity>
+            <TouchableOpacity style={[styles.headerIcon, { backgroundColor: isDark ? '#1A1A1A' : '#FFF' }]}><Bookmark size={20} color={isDark ? '#FFF' : '#111'} /></TouchableOpacity>
+            <TouchableOpacity style={[styles.headerIcon, { backgroundColor: isDark ? '#1A1A1A' : '#FFF' }]}><Bell size={20} color={isDark ? '#FFF' : '#111'} /></TouchableOpacity>
           </View>
         </View>
 
         {/* CATEGORIES */}
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.catScroll}>
           {CATEGORIES.map(cat => (
-            <TouchableOpacity key={cat} onPress={() => setActiveCategory(cat)} style={[styles.catPill, activeCategory === cat && styles.catPillActive]}>
-              <Text style={[styles.catText, activeCategory === cat && styles.catTextActive]}>{cat}</Text>
+            <TouchableOpacity key={cat} onPress={() => setActiveCategory(cat)} style={[styles.catPill, { backgroundColor: isDark ? '#1A1A1A' : '#FFF', borderColor: isDark ? '#333' : '#E8E8E8' }, activeCategory === cat && styles.catPillActive]}>
+              <Text style={[styles.catText, { color: isDark ? '#AAA' : '#666' }, activeCategory === cat && styles.catTextActive]}>{cat}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
 
         {/* TRENDING */}
-        <SectionHeader title="Trending Now" icon={TrendingUp} color="#D32F2F" onSeeAll={() => {}} />
+        <SectionHeader title="Trending Now" icon={TrendingUp} color="#D32F2F" onSeeAll={() => {}} isDark={isDark} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hScroll}>
           {trending.map((item, i) => <TrendingCard key={item._id || i} item={item} onPress={() => navigation.navigate('ArticleDetail', { article: item })} />)}
         </ScrollView>
 
         {/* POPULAR */}
-        <SectionHeader title="Popular News" onSeeAll={() => {}} />
-        {popular.slice(0, 5).map((item, i) => <ArticleCard key={item._id || i} item={item} onPress={() => navigation.navigate('ArticleDetail', { article: item })} />)}
+        <SectionHeader title="Popular News" color={isDark ? '#FFF' : '#111'} onSeeAll={() => {}} isDark={isDark} />
+        {popular.slice(0, 5).map((item, i) => <ArticleCard key={item._id || i} item={item} onPress={() => navigation.navigate('ArticleDetail', { article: item })} isDark={isDark} />)}
 
         {/* WORLD */}
-        <SectionHeader title="World News" icon={Globe2} color="#333" onSeeAll={() => {}} />
+        <SectionHeader title="World News" icon={Globe2} color={isDark ? '#FFF' : '#333'} onSeeAll={() => {}} isDark={isDark} />
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hScroll}>
           {worldNews.map((item, i) => <WorldCard key={item._id || i} item={item} onPress={() => navigation.navigate('ArticleDetail', { article: item })} />)}
         </ScrollView>
 
         {/* MORE POPULAR */}
-        {popular.slice(5).map((item, i) => <ArticleCard key={'p2' + (item._id || i)} item={item} onPress={() => navigation.navigate('ArticleDetail', { article: item })} />)}
+        {popular.slice(5).map((item, i) => <ArticleCard key={'p2' + (item._id || i)} item={item} onPress={() => navigation.navigate('ArticleDetail', { article: item })} isDark={isDark} />)}
 
         {/* FOR YOU */}
-        <SectionHeader title="For You" onSeeAll={() => {}} />
+        <SectionHeader title="For You" color={isDark ? '#FFF' : '#111'} onSeeAll={() => {}} isDark={isDark} />
         <Text style={styles.forYouHint}>↑  Swipe up to explore more</Text>
         <ForYouStack
           items={forYou}

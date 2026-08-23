@@ -9,10 +9,12 @@ import {
   Linking,
   StatusBar,
   Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
+  useColorScheme
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronLeft, Share, ThumbsUp, MoreVertical, Sparkles } from 'lucide-react-native';
+import { OPTIMIZER_URL } from '@env';
 
 const { width } = Dimensions.get('window');
 
@@ -30,8 +32,10 @@ const formatTime = (dateStr, timeStr) => {
 const ArticleDetailScreen = ({ route, navigation }) => {
   const { article } = route.params;
   const insets = useSafeAreaInsets();
+  const theme = useColorScheme();
+  const isDark = theme === 'dark';
 
-  const sourceName = article.source || 'News Hub';
+  const sourceName = article.source || 'News';
   const sourceInitial = sourceName.charAt(0).toUpperCase();
   const publishDate = formatTime(article.date, article.time);
   
@@ -77,7 +81,7 @@ const ArticleDetailScreen = ({ route, navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: isDark ? '#0D0D0D' : '#F7F9F8' }]}>
       <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
 
       <ScrollView
@@ -85,7 +89,7 @@ const ArticleDetailScreen = ({ route, navigation }) => {
         contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}
       >
         {/* Header Image Area */}
-        <View style={styles.imageContainer}>
+        <View style={[styles.imageContainer, { backgroundColor: isDark ? '#1A1A1A' : '#EAE6DF' }]}>
           {article.image_link ? (
             <Image
               source={{ uri: article.image_link }}
@@ -93,7 +97,7 @@ const ArticleDetailScreen = ({ route, navigation }) => {
               resizeMode="cover"
             />
           ) : (
-            <View style={[styles.heroImage, styles.placeholderImage]} />
+            <View style={[styles.heroImage, styles.placeholderImage, { backgroundColor: isDark ? '#333' : '#E5E5E5' }]} />
           )}
 
           {/* Top Navigation */}
@@ -113,58 +117,55 @@ const ArticleDetailScreen = ({ route, navigation }) => {
             </View>
           </View>
           
-          <View style={styles.imageBottomCurve} />
+          <View style={[styles.imageBottomCurve, { backgroundColor: isDark ? '#0D0D0D' : '#F7F9F8' }]} />
         </View>
 
         {/* Content Area overlapping image slightly */}
-        <View style={styles.contentContainer}>
+        <View style={[styles.contentContainer, { backgroundColor: isDark ? '#0D0D0D' : '#F7F9F8' }]}>
           
           {/* Floating Source Header */}
-          <View style={styles.sourceRow}>
+          <View style={[styles.sourceRow, { backgroundColor: isDark ? '#1A1A1A' : '#FFFFFF' }]}>
             <View style={styles.sourceLeft}>
               <View style={styles.sourceLogo}>
                 <Text style={styles.sourceLogoText}>{sourceInitial}</Text>
               </View>
               <View>
-                <Text style={styles.sourceName}>{sourceName}</Text>
-                <Text style={styles.timeText}>2 hours ago</Text>
+                <Text style={[styles.sourceName, { color: isDark ? '#FFF' : '#111' }]}>{sourceName}</Text>
+                <Text style={[styles.timeText, { color: isDark ? '#AAA' : '#888' }]}>{publishDate}</Text>
               </View>
             </View>
-            <TouchableOpacity style={styles.shareButton}>
-              <Share size={20} color="#111" />
+            <TouchableOpacity style={[styles.shareButton, { borderColor: isDark ? '#333' : '#EAEAEA' }]}>
+              <Share size={20} color={isDark ? '#FFF' : '#111'} />
             </TouchableOpacity>
           </View>
 
           {/* Headline */}
-          <Text style={styles.headline}>{article.headline}</Text>
-          
-          {/* Date & Time */}
-          <Text style={styles.publishDate}>{publishDate}</Text>
+          <Text style={[styles.headline, { color: isDark ? '#FFF' : '#111' }]}>{article.headline}</Text>
 
           {/* Meta Information Bar */}
-          <View style={styles.metaInfoBar}>
-            <Text style={styles.metaText}>By Daniel Carter</Text>
-            <Text style={styles.metaTextBold}>{sourceName}</Text>
+          <View style={[styles.metaInfoBar, { borderColor: isDark ? '#333' : '#EAEAEA' }]}>
+            <Text style={[styles.metaText, { color: isDark ? '#AAA' : '#666' }]}>Source:</Text>
+            <Text style={[styles.metaTextBold, { color: isDark ? '#FFF' : '#111' }]}>{sourceName}</Text>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <ThumbsUp size={16} color="#666" style={{marginRight: 6}}/>
-              <Text style={styles.metaText}>10k liked</Text>
+              <ThumbsUp size={16} color={isDark ? '#AAA' : '#666'} style={{marginRight: 6}}/>
+              <Text style={[styles.metaText, { color: isDark ? '#AAA' : '#666' }]}>10k liked</Text>
             </View>
           </View>
 
           {/* AI Optimize Button */}
           {!aiSummary && (
             <TouchableOpacity 
-              style={styles.aiButton} 
+              style={[styles.aiButton, { backgroundColor: isDark ? '#162b1f' : '#EAF6EE', borderColor: isDark ? '#1d422b' : '#C3E8D2' }]} 
               onPress={handleOptimize}
               disabled={isOptimizing}
               activeOpacity={0.7}
             >
               {isOptimizing ? (
-                <ActivityIndicator size="small" color="#111" style={styles.aiIcon} />
+                <ActivityIndicator size="small" color={isDark ? '#FFF' : '#111'} style={styles.aiIcon} />
               ) : (
-                <Sparkles size={20} color="#111" style={styles.aiIcon} />
+                <Sparkles size={20} color={isDark ? '#FFF' : '#111'} style={styles.aiIcon} />
               )}
-              <Text style={styles.aiButtonText}>
+              <Text style={[styles.aiButtonText, { color: isDark ? '#FFF' : '#111' }]}>
                 {isOptimizing ? "Generating AI Summary..." : "Summarize with AI"}
               </Text>
             </TouchableOpacity>
@@ -172,26 +173,26 @@ const ArticleDetailScreen = ({ route, navigation }) => {
 
           {/* AI Summary Card */}
           {aiSummary && (
-            <View style={styles.aiSummaryCard}>
+            <View style={[styles.aiSummaryCard, { backgroundColor: isDark ? '#162b1f' : '#EAF6EE', borderColor: isDark ? '#1d422b' : '#C3E8D2' }]}>
               <View style={styles.aiSummaryHeader}>
                 <Sparkles size={18} color="#00C853" style={styles.summarizedBadgeIcon} />
                 <Text style={styles.summarizedBadgeText}>AI Summary</Text>
               </View>
-              <Text style={styles.aiSummaryText}>{aiSummary}</Text>
+              <Text style={[styles.aiSummaryText, { color: isDark ? '#DDD' : '#333' }]}>{aiSummary}</Text>
             </View>
           )}
 
-          <Text style={styles.summaryText}>
+          <Text style={[styles.summaryText, { color: isDark ? '#DDD' : '#333' }]}>
             {content}
           </Text>
 
           {article.link && (
             <TouchableOpacity
-              style={styles.readMoreBtn}
+              style={[styles.readMoreBtn, { backgroundColor: isDark ? '#FFF' : '#111' }]}
               onPress={handleOpenSource}
               activeOpacity={0.8}
             >
-              <Text style={styles.readMoreText}>Read Full Article</Text>
+              <Text style={[styles.readMoreText, { color: isDark ? '#111' : '#FFF' }]}>Read Full Article</Text>
             </TouchableOpacity>
           )}
         </View>
