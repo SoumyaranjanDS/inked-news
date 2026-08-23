@@ -258,13 +258,18 @@ def fetch_worldnews(limit=10):
         articles = []
         for a in r.json().get('news', []):
             date, time = _normalise_dt(a.get('publish_date', ''))
+            headline = a.get('title', '')
+            source = 'World News'
+            if headline and ' - ' in headline:
+                source = headline.split(' - ')[-1].strip()
+            
             articles.append({
-                'headline': a.get('title', ''),
+                'headline': headline,
                 'description': a.get('text', '')[:300],
                 'detailed_description': a.get('text', ''),
                 'link': a.get('url', ''),
                 'image_link': a.get('image', ''),
-                'source': a.get('source_country', 'World News'),
+                'source': source,
                 'date': date,
                 'time': time,
             })
