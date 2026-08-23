@@ -1,7 +1,10 @@
 fastapi
-uvicorn
+uvicorn[standard]
 pymongo
 python-dotenv
 scrapy
 scrapy-playwright
 feedparser
+schedule
+requests
+itemadapter
