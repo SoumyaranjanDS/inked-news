@@ -1,23 +1,20 @@
 import os
+import json
+import urllib.request
+import urllib.error
 
 def setup_ai():
-    api_key = os.getenv("GROQ")
-    if api_key:
-        try:
-            from groq import Groq
-            client = Groq(api_key=api_key)
-            return client
-        except ImportError:
-            print("Please install groq: pip install groq")
-    return None
+    # Fetch OpenRouter key from environment variables
+    api_key = os.getenv("OPENROUTER")
+    if not api_key:
+        print("Warning: OPENROUTER API key not found in .env")
+    return api_key
 
-def generate_summary_and_moderation(model, article_text, headline):
+def generate_summary_and_moderation(model_key, article_text, headline):
     """
     Returns a dictionary with 'summary' and 'moderation_status'.
-    In a full production scenario, you would enforce a JSON schema here.
     """
-    if not model:
-        # Fallback if no API key
+    if not model_key:
         return {
             "summary": article_text[:200] + "...",
             "moderation_status": "Clean",
@@ -27,40 +24,72 @@ def generate_summary_and_moderation(model, article_text, headline):
     prompt = f"""
     You are an expert news editor and content moderator.
     Read the following article and provide two things:
-    1. A simpler, rewritten version of the description in your own words. It should be engaging and completely avoid direct pasting of the original text.
+    1. A concise, engaging, and accurate SHORT SUMMARY of the article (3-4 sentences max). 
     2. A moderation verdict: 'Clean' if it is safe for general audiences, or 'Flagged' if it contains explicit, dangerous, or highly controversial content.
 
     Headline: {headline}
     Article/Description: {article_text}
 
     Format your response EXACTLY like this:
-    SUMMARY: <your rewritten description>
+    REWRITE: <your short summary>
     VERDICT: <Clean or Flagged>
     """
     
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {model_key}",
+        "Content-Type": "application/json"
+    }
+    
+    data = {
+        "model": "meta-llama/llama-3.1-8b-instruct", 
+        "messages": [
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        "temperature": 0.3
+    }
+    
     try:
-        response = model.chat.completions.create(
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt,
-                }
-            ],
-            model="llama-3.1-8b-instant",
-            temperature=0.3,
-        )
-        text = response.choices[0].message.content
+        req = urllib.request.Request(url, headers=headers, data=json.dumps(data).encode('utf-8'), method='POST')
+        with urllib.request.urlopen(req) as response:
+            res_body = response.read()
+            res_json = json.loads(res_body)
+            text = res_json['choices'][0]['message']['content']
         
         # Simple string parsing
         summary = ""
         verdict = "Clean"
         
-        for line in text.split('\n'):
-            if line.startswith('SUMMARY:'):
-                summary = line.replace('SUMMARY:', '').strip()
-            elif line.startswith('VERDICT:'):
-                verdict = line.replace('VERDICT:', '').strip()
+        lines = text.split('\n')
+        rewrite_lines = []
+        in_rewrite = False
+        
+        for line in lines:
+            line_upper = line.upper()
+            if 'VERDICT:' in line_upper:
+                verdict = line_upper.split('VERDICT:')[-1].strip()
+                in_rewrite = False
+            elif 'REWRITE:' in line_upper:
+                in_rewrite = True
+                # Clean up the REWRITE string itself
+                idx = line_upper.find('REWRITE:')
+                content_part = line[idx + 8:].strip()
+                if content_part:
+                    rewrite_lines.append(content_part)
+            elif in_rewrite:
+                rewrite_lines.append(line.strip())
                 
+        summary = '\n'.join(rewrite_lines).strip()
+                
+        if not summary:
+            # Fallback: if we couldn't parse it, just return the raw text (filtering out the VERDICT if present)
+            clean_text = [l.strip() for l in lines if 'VERDICT:' not in l.upper()]
+            summary = '\n'.join(clean_text).strip()
+            
+        # Last resort fallback
         if not summary:
             summary = article_text[:200] + "..."
             
@@ -69,7 +98,10 @@ def generate_summary_and_moderation(model, article_text, headline):
             "moderation_status": verdict,
             "confidence": 95 if verdict == "Clean" else 80
         }
+    except urllib.error.HTTPError as e:
+        err_msg = e.read().decode('utf-8')
+        print(f"AI Generation failed: {e.code} - {err_msg}")
+        raise e
     except Exception as e:
         print(f"AI Generation failed: {e}")
-        # Raise exception so the main queue can handle rate limits (e.g. 429) and retry
         raise e

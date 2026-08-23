@@ -1,252 +1,115 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
-  StyleSheet,
-  Text,
-  View,
-  StatusBar,
-  Animated,
-  Dimensions,
-  TouchableOpacity,
-  Image,
+  StyleSheet, Text, View, StatusBar, Animated,
+  Dimensions, TouchableOpacity, ScrollView,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
+import { Zap, Globe2, Brain } from 'lucide-react-native';
 
 const { width, height } = Dimensions.get('window');
 
-const PRIMARY_COLOR = '#d60000f0';
-
-const DEFAULT_ARTICLES = [
-  {
-    id: '1',
-    category: 'TRENDING',
-    title: 'Loading latest news...',
-    image: 'https://i.pinimg.com/736x/26/26/f6/2626f652abccbf2bcc705b394e8bdd04.jpg',
-  },
+const FEATURES = [
+  { icon: Globe2, label: 'Global Coverage', desc: 'News from 50+ sources worldwide, curated in real time.' },
+  { icon: Zap, label: 'Breaking Alerts', desc: 'Be the first to know with instant breaking news notifications.' },
+  { icon: Brain, label: 'AI Summaries', desc: 'Too busy to read? Get 3-line AI summaries of any article.' },
 ];
 
 const OnboardingCarousel = ({ navigation }) => {
-  const [articles, setArticles] = useState(DEFAULT_ARTICLES);
-  const scrollX = useRef(new Animated.Value(0)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-
+  const slideAnim = useRef(new Animated.Value(30)).current;
   const insets = useSafeAreaInsets();
 
   useEffect(() => {
-    // 1. Fetch Trending News
-    fetch('http://localhost:5000/api/trending?q=india&limit=3')
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && data.data && data.data.length > 0) {
-          const formattedArticles = data.data.map(item => ({
-            id: item._id,
-            category: item.source ? item.source.toUpperCase() : 'TRENDING',
-            title: item.headline,
-            date: item.date || 'Today',
-            time: item.time || '12:00 pm',
-            image: item.image_link || 'https://i.pinimg.com/736x/26/26/f6/2626f652abccbf2bcc705b394e8bdd04.jpg',
-          }));
-          setArticles(formattedArticles);
-        }
-      })
-      .catch(err => console.log('Error fetching trending news:', err));
-
-    // 2. Start fade animation
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 800,
-      useNativeDriver: true,
-    }).start();
+    Animated.parallel([
+      Animated.timing(fadeAnim, { toValue: 1, duration: 700, useNativeDriver: true }),
+      Animated.timing(slideAnim, { toValue: 0, duration: 700, useNativeDriver: true }),
+    ]).start();
   }, []);
 
   return (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
-      <StatusBar hidden />
+    <View style={styles.container}>
+      <StatusBar barStyle="light-content" backgroundColor="transparent" translucent />
 
-      <Animated.ScrollView
-        horizontal
-        pagingEnabled
-        bounces={false}
-        showsHorizontalScrollIndicator={false}
-        scrollEventThrottle={16}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { x: scrollX } } }],
-          {
-            useNativeDriver: true,
-          },
-        )}
+      <LinearGradient
+        colors={['#0D0D0D', '#1A0505', '#0D0D0D']}
+        style={StyleSheet.absoluteFill}
+      />
+      <LinearGradient
+        colors={['rgba(211,47,47,0.35)', 'transparent']}
+        style={styles.topGlow}
+      />
+
+      <Animated.View
+        style={[styles.content, { opacity: fadeAnim, transform: [{ translateY: slideAnim }], paddingTop: insets.top + 40 }]}
       >
-        {articles.map((item, index) => (
-          <View key={item.id} style={styles.slide}>
-            
-            {/* TOP HALF: IMAGE */}
-            <View style={styles.topHalf}>
-              <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
-              
-              {/* Subtle gradient at the bottom of the image for "Breaking News" text readability */}
-              <LinearGradient
-                pointerEvents="none"
-                colors={['rgba(0,0,0,0)', 'rgba(0,0,0,0.8)']}
-                style={styles.imageGradient}
-              />
-              
-              {/* Globe Icon Top Right */}
-              <View style={[styles.globeIconContainer, { top: Math.max(insets.top, 20) }]}>
-                <Text style={styles.globeIcon}>üåê</Text>
-              </View>
-
-              {/* Breaking News Text */}
-              <View style={styles.breakingNewsContainer}>
-                <Text style={styles.breakingNewsText}>Breaking{'\n'}News</Text>
-              </View>
-            </View>
-
-            {/* BOTTOM HALF: SOLID RED */}
-            <View style={styles.bottomHalf}>
-              {/* Slanted decoration top right */}
-              <View style={styles.slantedCorner} />
-
-              <View style={styles.bottomContent}>
-                <Text style={styles.category}>{item.category}</Text>
-                <Text style={styles.title} numberOfLines={5}>{item.title}</Text>
-                
-                <Text style={styles.dateTime}>
-                  {item.date} / {item.time}
-                </Text>
-
-                <View style={styles.divider} />
-
-                {index === articles.length - 1 && (
-                  <TouchableOpacity 
-                    style={styles.getStartedButton}
-                    onPress={() => navigation.navigate('InterestSelection')}
-                  >
-                    <Text style={styles.getStartedText}>GET STARTED</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            </View>
-
+        {/* Logo */}
+        <View style={styles.logoRow}>
+          <View style={styles.logoCircle}>
+            <Text style={styles.logoLetters}>in</Text>
           </View>
-        ))}
-      </Animated.ScrollView>
-    </Animated.View>
+          <Text style={styles.logoText}>inked.</Text>
+        </View>
+
+        <Text style={styles.headline}>Your news,{'\n'}your way.</Text>
+        <Text style={styles.sub}>The smarter way to stay on top of what matters ó personalised, fast, and beautifully presented.</Text>
+
+        {/* Features */}
+        <View style={styles.featureList}>
+          {FEATURES.map((f, i) => {
+            const Icon = f.icon;
+            return (
+              <View key={i} style={styles.featureRow}>
+                <View style={styles.featureIcon}>
+                  <Icon size={20} color="#D32F2F" strokeWidth={2} />
+                </View>
+                <View style={styles.featureText}>
+                  <Text style={styles.featureLabel}>{f.label}</Text>
+                  <Text style={styles.featureDesc}>{f.desc}</Text>
+                </View>
+              </View>
+            );
+          })}
+        </View>
+      </Animated.View>
+
+      {/* CTA */}
+      <Animated.View style={[styles.ctaWrap, { opacity: fadeAnim, paddingBottom: insets.bottom + 32 }]}>
+        <TouchableOpacity
+          style={styles.ctaButton}
+          activeOpacity={0.85}
+          onPress={() => navigation.replace('Main')}
+        >
+          <Text style={styles.ctaText}>Get Started</Text>
+        </TouchableOpacity>
+        <Text style={styles.ctaSub}>Free. No sign-up required.</Text>
+      </Animated.View>
+    </View>
   );
 };
 
 export default OnboardingCarousel;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: PRIMARY_COLOR,
+  container: { flex: 1, backgroundColor: '#0D0D0D' },
+  topGlow: {
+    position: 'absolute', top: 0, left: 0, right: 0, height: height * 0.4,
   },
-  slide: {
-    width,
-    height,
-    flexDirection: 'column',
-  },
-  
-  /* TOP HALF (IMAGE) */
-  topHalf: {
-    height: '50%',
-    width: '100%',
-    position: 'relative',
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-  },
-  imageGradient: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 150,
-  },
-  globeIconContainer: {
-    position: 'absolute',
-    right: 20,
-    zIndex: 10,
-  },
-  globeIcon: {
-    fontSize: 28,
-    color: '#FFF',
-  },
-  breakingNewsContainer: {
-    position: 'absolute',
-    bottom: 20,
-    left: 20,
-    zIndex: 10,
-  },
-  breakingNewsText: {
-    color: '#FFF',
-    fontSize: 28,
-    fontWeight: 'bold',
-    lineHeight: 32,
-  },
-
-  /* BOTTOM HALF (RED) */
-  bottomHalf: {
-    height: '50%',
-    width: '100%',
-    backgroundColor: PRIMARY_COLOR,
-    position: 'relative',
-  },
-  slantedCorner: {
-    position: 'absolute',
-    top: -20,
-    right: 0,
-    width: 0,
-    height: 0,
-    backgroundColor: 'transparent',
-    borderStyle: 'solid',
-    borderRightWidth: 80,
-    borderTopWidth: 20,
-    borderRightColor: PRIMARY_COLOR,
-    borderTopColor: 'transparent',
-  },
-  bottomContent: {
-    flex: 1,
-    padding: 24,
-    paddingTop: 30,
-    justifyContent: 'space-between',
-  },
-  category: {
-    color: '#FFF',
-    fontSize: 12,
-    fontWeight: '900',
-    letterSpacing: 1.5,
-    marginBottom: 15,
-  },
-  title: {
-    color: '#FFF',
-    fontSize: 22,
-    fontWeight: 'bold',
-    lineHeight: 30,
-  },
-  dateTime: {
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: 13,
-    marginTop: 15,
-  },
-  divider: {
-    height: 1,
-    backgroundColor: 'rgba(255,255,255,0.3)',
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  getStartedButton: {
-    backgroundColor: '#FFF',
-    paddingVertical: 14,
-    borderRadius: 30,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  getStartedText: {
-    color: PRIMARY_COLOR,
-    fontSize: 16,
-    fontWeight: 'bold',
-    letterSpacing: 1,
-  },
+  content: { flex: 1, paddingHorizontal: 28 },
+  logoRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 40 },
+  logoCircle: { width: 40, height: 40, borderRadius: 12, backgroundColor: '#D32F2F', justifyContent: 'center', alignItems: 'center', marginRight: 10 },
+  logoLetters: { color: '#FFF', fontSize: 18, fontWeight: '900', letterSpacing: -0.5 },
+  logoText: { fontSize: 32, fontWeight: '900', color: '#FFFFFF', letterSpacing: -1.5 },
+  headline: { fontSize: 44, fontWeight: '900', color: '#FFFFFF', letterSpacing: -1.5, lineHeight: 50, marginBottom: 16 },
+  sub: { fontSize: 16, color: 'rgba(255,255,255,0.5)', lineHeight: 24, marginBottom: 48 },
+  featureList: { gap: 24 },
+  featureRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 16 },
+  featureIcon: { width: 44, height: 44, borderRadius: 12, backgroundColor: 'rgba(211,47,47,0.12)', justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: 'rgba(211,47,47,0.25)' },
+  featureText: { flex: 1 },
+  featureLabel: { fontSize: 16, fontWeight: '700', color: '#FFFFFF', marginBottom: 4 },
+  featureDesc: { fontSize: 14, color: 'rgba(255,255,255,0.45)', lineHeight: 20 },
+  ctaWrap: { paddingHorizontal: 28, alignItems: 'center' },
+  ctaButton: { width: '100%', backgroundColor: '#D32F2F', paddingVertical: 18, borderRadius: 16, alignItems: 'center', marginBottom: 14 },
+  ctaText: { color: '#FFF', fontSize: 17, fontWeight: '800', letterSpacing: 0.3 },
+  ctaSub: { color: 'rgba(255,255,255,0.3)', fontSize: 13 },
 });

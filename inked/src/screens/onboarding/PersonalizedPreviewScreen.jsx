@@ -11,7 +11,7 @@ const PersonalizedPreviewScreen = ({ route, navigation }) => {
   useEffect(() => {
     if (interests.length > 0) {
       const query = interests.join(',');
-      fetch(`http://localhost:5000/api/interests?topics=${query}`)
+      fetch(`http://10.0.2.2:5000/api/interests?topics=${query}`)
         .then(res => res.json())
         .then(data => {
           if (data.success) {

@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, SafeAreaView, Dimensions, StatusBar } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
+
+const { width, height } = Dimensions.get('window');
 
 const INTERESTS = [
   'Politics', 'Business', 'Technology', 'Sports',
@@ -21,56 +24,92 @@ const InterestSelectionScreen = ({ navigation }) => {
   const isEnabled = selected.length === 3;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>What are you{'\n'}interested in?</Text>
-          <Text style={styles.subtitle}>Select exactly 3 ({selected.length}/3)</Text>
-        </View>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
 
-        <ScrollView contentContainerStyle={styles.grid}>
-          {INTERESTS.map((interest) => {
-            const isSelected = selected.includes(interest);
-            return (
-              <TouchableOpacity
-                key={interest}
-                activeOpacity={0.7}
-                onPress={() => toggleInterest(interest)}
-                style={[
-                  styles.pill,
-                  isSelected ? styles.pillSelected : styles.pillUnselected
-                ]}
-              >
-                <Text style={[styles.pillText, isSelected ? styles.pillTextSelected : null]}>
-                  {interest}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-        </ScrollView>
+      <LinearGradient 
+        colors={['rgba(255,255,255,0)', 'rgba(195, 232, 210, 0.4)']}
+        style={styles.glowBottom} 
+      />
+      <LinearGradient 
+        colors={['rgba(235, 245, 240, 0.6)', 'rgba(255,255,255,0)']}
+        style={styles.glowTop} 
+      />
 
-        <View style={styles.footer}>
-          <TouchableOpacity
-            style={[styles.button, !isEnabled && styles.buttonDisabled]}
-            disabled={!isEnabled}
-            onPress={() => navigation.navigate('PersonalizedPreview', { interests: selected })}
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.content}>
+          <View style={styles.header}>
+            <Text style={styles.title}>What are you{'\n'}interested in?</Text>
+            <Text style={styles.subtitle}>Select exactly 3 ({selected.length}/3)</Text>
+          </View>
+
+          <ScrollView 
+            contentContainerStyle={styles.grid}
+            showsVerticalScrollIndicator={false}
           >
-            <Text style={[styles.buttonText, !isEnabled && styles.buttonTextDisabled]}>Continue</Text>
-          </TouchableOpacity>
+            {INTERESTS.map((interest) => {
+              const isSelected = selected.includes(interest);
+              return (
+                <TouchableOpacity
+                  key={interest}
+                  activeOpacity={0.7}
+                  onPress={() => toggleInterest(interest)}
+                  style={[
+                    styles.pill,
+                    isSelected ? styles.pillSelected : styles.pillUnselected
+                  ]}
+                >
+                  <Text style={[styles.pillText, isSelected && styles.pillTextSelected]}>
+                    {interest}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </ScrollView>
+
+          <View style={styles.footer}>
+            <TouchableOpacity
+              style={[styles.button, !isEnabled && styles.buttonDisabled]}
+              disabled={!isEnabled}
+              onPress={() => navigation.navigate('PersonalizedPreview', { interests: selected })}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.buttonText, !isEnabled && styles.buttonTextDisabled]}>Continue</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </View>
   );
 };
 
 export default InterestSelectionScreen;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  glowBottom: {
+    position: 'absolute',
+    bottom: -height * 0.2,
+    left: -width * 0.2,
+    width: width * 1.4,
+    height: width * 1.4,
+    borderRadius: width * 0.7,
+  },
+  glowTop: {
+    position: 'absolute',
+    top: -height * 0.1,
+    right: -width * 0.2,
+    width: width,
+    height: width,
+    borderRadius: width * 0.5,
+  },
   safeArea: {
     flex: 1,
-    backgroundColor: '#F7F4EE',
   },
-  container: {
+  content: {
     flex: 1,
     paddingHorizontal: 24,
     paddingTop: 40,
@@ -82,30 +121,38 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: 'serif',
     fontSize: 32,
-    fontWeight: '700',
+    fontWeight: '800',
     color: '#111',
     textAlign: 'center',
     marginBottom: 8,
+    letterSpacing: -0.5,
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#666',
+    fontWeight: '500',
   },
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'center',
     gap: 12,
+    paddingBottom: 20,
   },
   pill: {
-    paddingVertical: 12,
+    paddingVertical: 14,
     paddingHorizontal: 24,
     borderRadius: 30,
     borderWidth: 1,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
+    elevation: 2,
   },
   pillUnselected: {
-    borderColor: '#CCC',
-    backgroundColor: 'transparent',
+    borderColor: '#EAEAEA',
+    backgroundColor: '#FFFFFF',
   },
   pillSelected: {
     borderColor: '#111',
@@ -113,8 +160,8 @@ const styles = StyleSheet.create({
   },
   pillText: {
     fontSize: 16,
-    color: '#111',
-    fontWeight: '500',
+    color: '#333',
+    fontWeight: '600',
   },
   pillTextSelected: {
     color: '#FFF',
@@ -125,18 +172,25 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#111',
-    paddingVertical: 16,
-    borderRadius: 0,
+    paddingVertical: 18,
+    borderRadius: 30,
     alignItems: 'center',
+    shadowColor: '#111',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
   buttonDisabled: {
     backgroundColor: '#E0E0E0',
+    shadowOpacity: 0,
+    elevation: 0,
   },
   buttonText: {
     color: '#FFF',
     fontSize: 16,
     fontWeight: '700',
-    letterSpacing: 1,
+    letterSpacing: 0.5,
   },
   buttonTextDisabled: {
     color: '#999',

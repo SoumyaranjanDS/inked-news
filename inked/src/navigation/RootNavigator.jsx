@@ -7,8 +7,6 @@ import MainTabs from './MainTabs';
 // Onboarding Screens
 import SplashScreen from '../screens/onboarding/SplashScreen';
 import OnboardingCarousel from '../screens/onboarding/OnboardingCarousel';
-import InterestSelectionScreen from '../screens/onboarding/InterestSelectionScreen';
-import PersonalizedPreviewScreen from '../screens/onboarding/PersonalizedPreviewScreen';
 
 // Core Screens (Not in Tabs)
 import ArticleDetailScreen from '../screens/main/ArticleDetailScreen';
@@ -33,8 +31,6 @@ const RootNavigator = () => {
       {/* Onboarding Flow */}
       <Stack.Screen name="Splash" component={SplashScreen} />
       <Stack.Screen name="OnboardingCarousel" component={OnboardingCarousel} />
-      <Stack.Screen name="InterestSelection" component={InterestSelectionScreen} />
-      <Stack.Screen name="PersonalizedPreview" component={PersonalizedPreviewScreen} />
 
       {/* Main App */}
       <Stack.Screen name="Main" component={MainTabs} />

@@ -116,7 +116,7 @@ export default function Home({ theme, toggleTheme }) {
                       {/* Content */}
                       <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
                         <Link to={`/article`} state={{ article }} style={{ textDecoration: 'none', color: 'inherit' }}>
-                          <h3 className="font-serif" style={{ fontSize: '1.4rem', fontWeight: 900, lineHeight: 1.3, marginBottom: '1rem', color: 'var(--text)' }}>
+                          <h3 className="font-serif" style={{ fontSize: '1.15rem', fontWeight: 600, lineHeight: 1.3, marginBottom: '1rem', color: 'var(--text)' }}>
                             {article.headline}
                           </h3>
                         </Link>
