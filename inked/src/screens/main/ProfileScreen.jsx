@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useColorScheme, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, useColorScheme, StatusBar, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { User, Settings, HelpCircle, Info, ChevronRight, LogIn } from 'lucide-react-native';
 
@@ -42,9 +42,11 @@ const ProfileScreen = () => {
             style={[styles.googleButton, { backgroundColor: isDark ? '#FFF' : '#111' }]}
             activeOpacity={0.8}
           >
-            {/* Using a simple 'G' text as a generic Google logo placeholder for now */}
             <View style={styles.googleIconPlaceholder}>
-              <Text style={[styles.googleG, { color: isDark ? '#111' : '#FFF' }]}>G</Text>
+              <Image 
+                source={{ uri: 'https://cdn-icons-png.flaticon.com/512/2991/2991148.png' }}
+                style={styles.googleLogoImage}
+              />
             </View>
             <Text style={[styles.googleBtnText, { color: isDark ? '#111' : '#FFF' }]}>Continue with Google</Text>
           </TouchableOpacity>
@@ -196,4 +198,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
   },
+  googleLogoImage: {
+    width: 20,
+    height: 20,
+    resizeMode: 'contain',
+  }
 });
