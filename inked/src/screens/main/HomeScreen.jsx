@@ -21,6 +21,20 @@ const formatTime = (_, timeStr) => {
   return '2h ago';
 };
 const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+const getRealSource = (item) => {
+  let src = item.source || 'News';
+  if (src.length <= 3 || src.toLowerCase() === 'in') {
+    const parts = item.headline ? item.headline.split(' - ') : [];
+    if (parts.length > 1) {
+      src = parts[parts.length - 1].trim();
+    } else {
+      src = 'News';
+    }
+  }
+  return src;
+};
+
 const CATEGORIES = ['All', 'Tech', 'Business', 'Sports', 'World', 'Health'];
 
 const TrendingCard = ({ item, onPress }) => (
@@ -29,14 +43,14 @@ const TrendingCard = ({ item, onPress }) => (
     <LinearGradient colors={['transparent', 'rgba(0,0,0,0.88)']} style={styles.trendGradient} />
     <View style={styles.trendBadge}><TrendingUp size={11} color="#FFF" /><Text style={styles.trendBadgeText}> TRENDING</Text></View>
     <View style={styles.trendContent}>
-      <Text style={styles.trendSource}>{item.source || 'News'}</Text>
+      <Text style={styles.trendSource}>{getRealSource(item)}</Text>
       <Text style={styles.trendHeadline} numberOfLines={2}>{item.headline}</Text>
     </View>
   </TouchableOpacity>
 );
 
 const ArticleCard = ({ item, onPress, isDark }) => {
-  const src = item.source || 'N';
+  const src = getRealSource(item);
   const init = src.charAt(0).toUpperCase();
   const time = formatTime(item.date, item.time);
   return (
@@ -74,7 +88,7 @@ const WorldCard = ({ item, onPress }) => (
     <LinearGradient colors={['transparent', 'rgba(0,0,0,0.88)']} style={styles.worldGradient} />
     <View style={styles.worldBadge}><Globe2 size={11} color="#FFF" /><Text style={styles.worldBadgeText}> WORLD</Text></View>
     <View style={styles.worldContent}>
-      <Text style={styles.worldSource}>{item.source || 'News'}</Text>
+      <Text style={styles.worldSource}>{getRealSource(item)}</Text>
       <Text style={styles.worldHeadline} numberOfLines={2}>{item.headline}</Text>
     </View>
   </TouchableOpacity>
@@ -154,7 +168,7 @@ const ForYouStack = ({ items, onPress, onSwipeStart, onSwipeEnd }) => {
               {item.image_link ? <Image source={{ uri: item.image_link }} style={styles.stackImage} /> : <View style={[styles.stackImage, { backgroundColor: '#DDD' }]} />}
               <LinearGradient colors={['transparent', 'rgba(0,0,0,0.92)']} style={styles.stackGradient} />
               <View style={styles.stackContent}>
-                <Text style={styles.stackSource}>{item.source || 'News'}</Text>
+                <Text style={styles.stackSource}>{getRealSource(item)}</Text>
                 <Text style={styles.stackHeadline} numberOfLines={3}>{item.headline}</Text>
                 <Text style={styles.stackHint}>↑  Swipe up for next</Text>
               </View>

@@ -35,7 +35,15 @@ const ArticleDetailScreen = ({ route, navigation }) => {
   const theme = useColorScheme();
   const isDark = theme === 'dark';
 
-  const sourceName = article.source || 'News';
+  let sourceName = article.source || 'News';
+  if (sourceName.length <= 3 || sourceName.toLowerCase() === 'in') {
+    const parts = article.headline ? article.headline.split(' - ') : [];
+    if (parts.length > 1) {
+      sourceName = parts[parts.length - 1].trim();
+    } else {
+      sourceName = 'News';
+    }
+  }
   const sourceInitial = sourceName.charAt(0).toUpperCase();
   const publishDate = formatTime(article.date, article.time);
   
