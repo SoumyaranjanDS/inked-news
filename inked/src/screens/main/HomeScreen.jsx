@@ -4,6 +4,7 @@ import {
   ActivityIndicator, RefreshControl, StatusBar, Dimensions,
   ScrollView, PanResponder, Animated,
 } from 'react-native';
+import { MAIN_BACKEND_URL } from '@env';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import LinearGradient from 'react-native-linear-gradient';
 import { Bell, Heart, MessageCircle, Eye, Share, MoreHorizontal, CheckCircle2, TrendingUp, Globe2, Bookmark } from 'lucide-react-native';
@@ -186,7 +187,7 @@ const HomeScreen = ({ navigation }) => {
 
   const fetchFeed = async () => {
     try {
-      const res = await fetch('http://10.0.2.147:5000/api/feed?limit=40&page=1');
+      const res = await fetch(`${MAIN_BACKEND_URL}/api/feed?limit=40&page=1`);
       const data = await res.json();
       if (data.success) {
         const decorated = shuffle(data.data).map(item => ({

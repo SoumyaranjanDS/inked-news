@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { MAIN_BACKEND_URL } from '@env';
 
 // Removing MOCK_NEWS as we will fetch real news
 
@@ -11,7 +12,7 @@ const PersonalizedPreviewScreen = ({ route, navigation }) => {
   useEffect(() => {
     if (interests.length > 0) {
       const query = interests.join(',');
-      fetch(`http://10.0.2.2:5000/api/interests?topics=${query}`)
+      fetch(`${MAIN_BACKEND_URL}/api/interests?topics=${query}`)
         .then(res => res.json())
         .then(data => {
           if (data.success) {

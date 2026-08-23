@@ -52,7 +52,7 @@ const ArticleDetailScreen = ({ route, navigation }) => {
   const handleOptimize = async () => {
     setIsOptimizing(true);
     try {
-      const response = await fetch('http://10.0.2.147:8001/api/optimize', {
+      const response = await fetch(`${OPTIMIZER_URL}/api/optimize`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
