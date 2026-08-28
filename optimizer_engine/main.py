@@ -30,12 +30,12 @@ def get_db_safe(client, db_name):
 
 raw_collection = get_db_safe(scraper_client, 'scraper')['articles']
 serving_collection = get_db_safe(main_client, 'main')['serving_articles']
+admin_settings_collection = get_db_safe(main_client, 'main')['admin_settings']
 moderation_log = get_db_safe(optimizer_client, 'optimizer')['moderation_log']
 
 # Ensure TTL index is set on the serving collection (expires after 2 days = 172800s)
 serving_collection.create_index("created_at", expireAfterSeconds=172800)
 
-model = setup_ai()
 app = FastAPI(docs_url=None, redoc_url=None)
 
 app.add_middleware(
@@ -57,25 +57,27 @@ class OptimizeRequest(BaseModel):
 def process_pending_articles():
     print("Transformer running: Polling for unprocessed articles...")
     
-    # We fetch articles that haven't been transformed yet
-    # Assuming 'transformed' flag doesn't exist or is False
     pending_articles = list(raw_collection.find({"transformed": {"$ne": True}}).limit(50))
     
     if not pending_articles:
         print("No pending articles found.")
         return {"status": "No pending articles found"}
 
+    # Fetch admin settings
+    settings = admin_settings_collection.find_one() or {}
+    ai_active = settings.get("ai_service_active", True)
+    
     processed_count = 0
     
     for article in pending_articles:
         headline = article.get('headline', '')
         description = article.get('description', '')
-        link = article.get('link', '')
         detailed_description = article.get('detailed_description', '')
+        text_to_process = detailed_description if detailed_description else description
+        link = article.get('link', '')
         
         print(f"Processing: {headline}")
         
-        # Write to Serving DB directly without AI transformation
         serving_article = {
             "headline": headline,
             "description": description,
@@ -87,17 +89,44 @@ def process_pending_articles():
             "time": article.get('time'),
             "published": True
         }
-        serving_collection.update_one(
-            {'link': link},
-            {
-                '$set': serving_article,
-                '$setOnInsert': {
-                    'created_at': datetime.datetime.now(datetime.timezone.utc)
-                }
-            },
-            upsert=True
-        )
-        print(f" -> Published to main db (raw text).")
+        
+        if ai_active:
+            try:
+                ai_result = generate_summary_and_moderation(settings, text_to_process, headline)
+                
+                # Log moderation
+                moderation_log.insert_one({
+                    "article_headline": headline,
+                    "verdict": ai_result["moderation_status"],
+                    "confidence": ai_result.get("confidence", 80),
+                    "timestamp": time.time(),
+                    "on_demand": False
+                })
+                
+                if ai_result["moderation_status"] == "Clean":
+                    serving_article["description"] = ai_result["summary"]
+                    # Do not publish if it's flagged
+                else:
+                    serving_article["published"] = False
+                    print(" -> Flagged by AI, skipping publish.")
+            except Exception as e:
+                print(f" -> AI processing failed for this article: {e}")
+                # Fallback to raw text if AI fails
+        else:
+            print(" -> AI service disabled. Using raw text.")
+
+        if serving_article.get("published", True):
+            serving_collection.update_one(
+                {'link': link},
+                {
+                    '$set': serving_article,
+                    '$setOnInsert': {
+                        'created_at': datetime.datetime.now(datetime.timezone.utc)
+                    }
+                },
+                upsert=True
+            )
+            print(f" -> Published to main db.")
             
         # Mark as transformed in scraper db
         raw_collection.update_one(
@@ -119,14 +148,20 @@ def trigger_optimize():
 @app.post("/api/optimize")
 def api_optimize(req: OptimizeRequest):
     try:
+        settings = admin_settings_collection.find_one() or {}
+        ai_active = settings.get("ai_service_active", True)
+        
+        if not ai_active:
+            return {"success": False, "error": "AI Service is currently in maintenance mode."}
+            
         # Run AI summary and moderation on-demand
-        ai_result = generate_summary_and_moderation(model, req.text, req.headline)
+        ai_result = generate_summary_and_moderation(settings, req.text, req.headline)
         
         # Log the on-demand moderation
         moderation_log.insert_one({
             "article_headline": req.headline,
             "verdict": ai_result["moderation_status"],
-            "confidence": ai_result["confidence"],
+            "confidence": ai_result.get("confidence", 80),
             "timestamp": time.time(),
             "on_demand": True
         })

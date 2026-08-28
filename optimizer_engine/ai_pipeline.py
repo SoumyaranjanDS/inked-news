@@ -10,34 +10,43 @@ def setup_ai():
         print("Warning: OPENROUTER API key not found in .env")
     return api_key
 
-def generate_summary_and_moderation(model_key, article_text, headline):
+def generate_summary_and_moderation(settings, article_text, headline):
     """
     Returns a dictionary with 'summary' and 'moderation_status'.
     """
-    if not model_key:
+    active_model = settings.get("active_model", "openrouter")
+    api_keys = settings.get("api_keys", {})
+    api_key = api_keys.get(active_model)
+    
+    if not api_key:
+        print(f"No API key for {active_model}, returning raw text.")
         return {
             "summary": article_text[:200] + "...",
             "moderation_status": "Clean",
             "confidence": 100
         }
         
+    custom_prompt = settings.get("custom_prompt", "")
+    if not custom_prompt:
+        custom_prompt = """You are an expert news editor and content moderator.
+Read the following article and provide two things:
+1. A concise, engaging, and accurate SHORT SUMMARY of the article (3-4 sentences max). 
+2. A moderation verdict: 'Clean' if it is safe for general audiences, or 'Flagged' if it contains explicit, dangerous, or highly controversial content.
+
+Format your response EXACTLY like this:
+REWRITE: <your short summary>
+VERDICT: <Clean or Flagged>"""
+
     prompt = f"""
-    You are an expert news editor and content moderator.
-    Read the following article and provide two things:
-    1. A concise, engaging, and accurate SHORT SUMMARY of the article (3-4 sentences max). 
-    2. A moderation verdict: 'Clean' if it is safe for general audiences, or 'Flagged' if it contains explicit, dangerous, or highly controversial content.
+    {custom_prompt}
 
     Headline: {headline}
     Article/Description: {article_text}
-
-    Format your response EXACTLY like this:
-    REWRITE: <your short summary>
-    VERDICT: <Clean or Flagged>
     """
     
     url = "https://openrouter.ai/api/v1/chat/completions"
     headers = {
-        "Authorization": f"Bearer {model_key}",
+        "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
     

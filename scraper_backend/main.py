@@ -8,9 +8,10 @@ import datetime
 from fastapi import FastAPI, Query
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
-import uvicorn
 import schedule
 
+# Ensure scraper_core is in python path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'scraper_core'))
 load_dotenv()
 
 app = FastAPI(docs_url=None, redoc_url=None)
@@ -61,7 +62,10 @@ def trigger_scrape(
     # ─── 2. API Fetchers ──────────────────────────────────────────────────
     if use_apis:
         try:
-            from scraper_core.scraper_core.api_fetchers import fetch_all_api_sources
+            try:
+                from scraper_core.api_fetchers import fetch_all_api_sources
+            except ImportError:
+                from scraper_core.scraper_core.api_fetchers import fetch_all_api_sources
             from pymongo import MongoClient
 
             mongo_uri = os.getenv('MONGODB_URI', 'mongodb://localhost:27017/scraper')
@@ -92,17 +96,53 @@ def trigger_scrape(
                     )
                     inserted += 1
 
-            results["apis"] = {"status": "success", "fetched": len(api_articles), "saved": inserted}
+            # Serialize articles for response (ensure no non-serializable objects)
+            clean_articles_list = []
+            for art in api_articles:
+                clean_art = {k: v for k, v in art.items() if k not in ['_id', 'created_at'] and not isinstance(v, (datetime.datetime, datetime.date))}
+                clean_articles_list.append(clean_art)
+
+            results["apis"] = {
+                "status": "success", 
+                "fetched": len(api_articles), 
+                "saved": inserted,
+                "articles": clean_articles_list
+            }
         except Exception as e:
             results["apis"] = {"status": "error", "message": str(e)}
 
     return {"status": "Scrape cycle completed", "results": results}
 
 
+@app.get("/latest-scraped")
+def get_latest_scraped(limit: int = 100):
+    """Retrieve the most recently scraped raw articles from MongoDB staging."""
+    try:
+        from pymongo import MongoClient
+        mongo_uri = os.getenv('MONGODB_URI', 'mongodb://localhost:27017/scraper')
+        client = MongoClient(mongo_uri)
+        try:
+            db = client.get_database()
+        except Exception:
+            db = client['scraper']
+        collection = db['articles']
+        docs = list(collection.find({}, {'_id': 0}).sort("created_at", -1).limit(limit))
+        # Format datetime fields if present
+        for doc in docs:
+            if 'created_at' in doc and isinstance(doc['created_at'], (datetime.datetime, datetime.date)):
+                doc['created_at'] = doc['created_at'].isoformat()
+        return {"success": True, "data": docs, "total": len(docs)}
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+
 @app.get("/sources")
 def list_sources():
     """List all configured sources and their enabled status."""
-    from scraper_core.scraper_core.spiders.rss_spider import RSS_FEEDS
+    try:
+        from scraper_core.spiders.rss_spider import RSS_FEEDS
+    except ImportError:
+        from scraper_core.scraper_core.spiders.rss_spider import RSS_FEEDS
     rss_sources = {name: {"type": "rss", "enabled": os.getenv('ENABLE_RSS', 'true').lower() == 'true', "url": url}
                    for name, url in RSS_FEEDS.items()}
     api_sources = {

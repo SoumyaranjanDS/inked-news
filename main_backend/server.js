@@ -29,6 +29,48 @@ mongoose
     console.error("❌ Database connection error:", err);
   });
 
+const OPTIMIZER_DB_URI = process.env.MONGO_URI_OPTIMIZER || "mongodb://localhost:27017/optimizer";
+const optimizerConnection = mongoose.createConnection(OPTIMIZER_DB_URI);
+optimizerConnection.on('connected', () => {
+  console.log("✅ Connected to Optimizer Database (MongoDB)");
+});
+
+// Admin Settings Schema
+const AdminSettingsSchema = new mongoose.Schema({
+  ai_service_active: { type: Boolean, default: true },
+  active_model: { type: String, default: 'openrouter' },
+  api_keys: {
+    openrouter: { type: String, default: '' },
+    gemini: { type: String, default: '' },
+    openai: { type: String, default: '' },
+  },
+  custom_prompt: { 
+    type: String, 
+    default: "You are an expert news editor and content moderator.\nRead the following article and provide two things:\n1. A concise, engaging, and accurate SHORT SUMMARY of the article (3-4 sentences max).\n2. A moderation verdict: 'Clean' if it is safe for general audiences, or 'Flagged' if it contains explicit, dangerous, or highly controversial content.\n\nFormat your response EXACTLY like this:\nREWRITE: <your short summary>\nVERDICT: <Clean or Flagged>" 
+  }
+});
+const AdminSettings = mongoose.model("AdminSettings", AdminSettingsSchema, "admin_settings");
+
+const ModerationLogSchema = new mongoose.Schema({
+  article_headline: String,
+  verdict: String,
+  confidence: Number,
+  timestamp: Number,
+  on_demand: Boolean
+});
+const ModerationLog = optimizerConnection.model("ModerationLog", ModerationLogSchema, "moderation_log");
+
+// Simple authentication middleware for admin
+const adminAuth = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const expectedPassword = process.env.ADMIN_PASSWORD || 'admin123';
+  if (authHeader && authHeader.split(' ')[1] === expectedPassword) {
+    next();
+  } else {
+    res.status(401).json({ success: false, error: 'Unauthorized' });
+  }
+};
+
 // Mongoose Schema for raw_articles
 const ArticleSchema = new mongoose.Schema({
   headline: String,
@@ -245,6 +287,81 @@ app.post("/api/orchestrate", async (req, res) => {
     console.error("Orchestration Error:", error);
     res.status(500).json({ success: false, error: error.message });
   }
+});
+
+// ── Admin Endpoints ──────────────────────────────────────────────────────────
+
+app.get("/api/admin/settings", adminAuth, async (req, res) => {
+  try {
+    let settings = await AdminSettings.findOne();
+    if (!settings) {
+      settings = await AdminSettings.create({});
+    }
+    res.json({ success: true, data: settings });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post("/api/admin/settings", adminAuth, async (req, res) => {
+  try {
+    let settings = await AdminSettings.findOne();
+    if (!settings) {
+      settings = new AdminSettings(req.body);
+    } else {
+      Object.assign(settings, req.body);
+    }
+    await settings.save();
+    res.json({ success: true, data: settings });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.post("/api/admin/trigger-scraper", adminAuth, async (req, res) => {
+  try {
+    const scrapeResponse = await fetch("http://localhost:8000/trigger-scrape", { method: "POST" });
+    const scrapeData = await scrapeResponse.json();
+    res.json({ success: true, data: scrapeData });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get("/api/admin/scraped-articles", adminAuth, async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 100;
+    const response = await fetch(`http://localhost:8000/latest-scraped?limit=${limit}`);
+    const data = await response.json();
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get("/api/admin/logs", adminAuth, async (req, res) => {
+  try {
+    const logs = await ModerationLog.find().sort({ timestamp: -1 }).limit(100);
+    res.json({ success: true, data: logs });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.delete("/api/admin/logs", adminAuth, async (req, res) => {
+  try {
+    await ModerationLog.deleteMany({});
+    res.json({ success: true, message: "All moderation logs cleared" });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+app.get("/api/admin/users", adminAuth, async (req, res) => {
+  res.json({ success: true, data: [
+    { id: 'usr_1', name: 'Soumyaranjan', email: 'soumy@example.com', status: 'Active' },
+    { id: 'usr_2', name: 'John Doe', email: 'john@example.com', status: 'Active' },
+  ] });
 });
 
 // ── Waitlist Endpoint (marketing website) ────────────────────────────────────

@@ -1,77 +1,217 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { Sparkles, CheckCircle2 } from "lucide-react";
 
 export default function Footer() {
+  const [email, setEmail] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (email) {
+      setSubscribed(true);
+      setEmail("");
+      setTimeout(() => setSubscribed(false), 4000);
+    }
+  };
+
   return (
-    <footer style={{ background: '#f8f8f8', marginTop: '4rem', paddingTop: '4rem', borderTop: '1px solid var(--rule-gray)' }}>
-      <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '3rem', paddingBottom: '3rem' }}>
-        {/* Column 1: Logo & Desc */}
-        <div>
-          <Link to="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-            <span className="font-serif" style={{ fontSize: '1.8rem', fontWeight: 900, color: 'var(--text)', letterSpacing: '-0.02em', lineHeight: 1 }}>
-              INKED
-            </span>
-            <span style={{ color: 'var(--masthead-red)', transform: 'rotate(90deg)' }}>&#9650;</span>
-          </Link>
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', lineHeight: 1.6 }}>
-            Aliquam ac ultricies efficitur class lacinia magnis platea bibendum phasellus commodo enim.
-          </p>
-          <div style={{ display: 'flex', gap: '1rem', marginTop: '1.5rem', color: 'var(--text)' }}>
-            <a href="#" style={{ color: 'inherit' }}><i className="lucide-facebook">FB</i></a>
-            <a href="#" style={{ color: 'inherit' }}><i className="lucide-twitter">TW</i></a>
-            <a href="#" style={{ color: 'inherit' }}><i className="lucide-instagram">IG</i></a>
-            <a href="#" style={{ color: 'inherit' }}><i className="lucide-youtube">YT</i></a>
-          </div>
-        </div>
+    <footer className="bg-[#111113] text-gray-400 border-t border-neutral-800 text-sm font-sans">
+      {/* ── Main Footer 4-Column Grid ── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-8 lg:gap-12">
+          {/* Column 1: Brand & Mission (4 cols) */}
+          <div className="lg:col-span-4 space-y-4">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-1 group no-underline"
+            >
+              <span className="font-sans font-semibold text-3xl tracking-tight text-white group-hover:text-red-500 transition-colors">
+                INKED<span className="text-red-600">.</span>
+              </span>
+            </Link>
 
-        {/* Column 2: Quick Links */}
-        <div>
-          <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1.5rem' }}>Quick Links</h4>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {['About Us', 'Contact', 'Advertise', 'Career', 'Site Map'].map(link => (
-              <Link key={link} to="#" style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textDecoration: 'none', borderBottom: '1px dashed var(--rule-gray)', paddingBottom: '0.5rem' }}>
-                {link}
-              </Link>
-            ))}
-          </div>
-        </div>
+            <p className="text-xs sm:text-sm text-gray-400 leading-relaxed max-w-sm font-normal">
+              An independent digital news publication delivering timely coverage across global developments, verified journalism, and comprehensive dispatches.
+            </p>
 
-        {/* Column 3: Category */}
-        <div>
-          <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1.5rem' }}>Category</h4>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            {['Lifestyle', 'Business', 'Entertainment', 'Technology', 'Healthcare'].map(link => (
-              <Link key={link} to="#" style={{ fontSize: '0.9rem', color: 'var(--text-muted)', textDecoration: 'none', borderBottom: '1px dashed var(--rule-gray)', paddingBottom: '0.5rem' }}>
-                {link}
-              </Link>
-            ))}
+            <div className="pt-2 flex items-center gap-3">
+              <div className="flex items-center gap-1.5 px-3 py-1 bg-neutral-900 border border-neutral-800 rounded-full text-xs font-normal text-emerald-400">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                Live Editorial Feed
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Column 4: Newsletter */}
-        <div>
-          <h4 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1.5rem' }}>Newsletter</h4>
-          <p style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-            Sign up our newsletter to get update information, news and free insight.
-          </p>
-          <form style={{ display: 'flex' }} onSubmit={e => e.preventDefault()}>
-            <input type="email" placeholder="Your email" style={{ flex: 1, padding: '0.6rem 1rem', border: '1px solid var(--rule-gray)', borderRadius: 0, outline: 'none' }} />
-            <button type="submit" className="btn-primary" style={{ padding: '0.6rem 1.2rem' }}>SIGN UP</button>
-          </form>
+          {/* Column 2: News Sections (2 cols) */}
+          <div className="lg:col-span-2 space-y-3 font-sans">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-white">
+              Categories
+            </h4>
+            <ul className="space-y-2 text-xs font-normal">
+              <li>
+                <Link
+                  to="/category/world"
+                  className="hover:text-red-400 transition-colors no-underline"
+                >
+                  World News
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/category/technology"
+                  className="hover:text-red-400 transition-colors no-underline"
+                >
+                  Technology
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/category/business"
+                  className="hover:text-red-400 transition-colors no-underline"
+                >
+                  Business & Markets
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/category/space"
+                  className="hover:text-red-400 transition-colors no-underline"
+                >
+                  Space Exploration
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/category/sports"
+                  className="hover:text-red-400 transition-colors no-underline"
+                >
+                  Sports Global
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/category/entertainment"
+                  className="hover:text-red-400 transition-colors no-underline"
+                >
+                  Entertainment
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Platform & Transparency (2 cols) */}
+          <div className="lg:col-span-2 space-y-3 font-sans">
+            <h4 className="text-xs font-semibold uppercase tracking-widest text-white">
+              About Inked
+            </h4>
+            <ul className="space-y-2 text-xs font-normal">
+              <li>
+                <Link
+                  to="/how-it-works"
+                  className="hover:text-red-400 transition-colors no-underline"
+                >
+                  How Inked Works
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/writers"
+                  className="hover:text-red-400 transition-colors no-underline"
+                >
+                  For Publishers
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/legal/content-policy"
+                  className="hover:text-red-400 transition-colors no-underline"
+                >
+                  Editorial Policy
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/legal/takedown"
+                  className="hover:text-red-400 transition-colors no-underline"
+                >
+                  Takedown Protocol
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 4: Newsletter & Daily Synthesis (4 cols) */}
+          <div className="lg:col-span-4 space-y-4 font-sans">
+            <div className="bg-neutral-900 border border-neutral-800 p-5 rounded-2xl">
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-red-500 block mb-1 flex items-center gap-1">
+                <Sparkles size={12} /> Daily Morning Digest
+              </span>
+              <h5 className="text-sm font-medium text-white mb-2">
+                Curated stories in your inbox
+              </h5>
+              <p className="text-xs text-gray-400 mb-4 leading-relaxed font-normal">
+                Join readers and journalists receiving our 3-minute morning news briefing.
+              </p>
+
+              {subscribed ? (
+                <div className="p-3 bg-emerald-950/80 border border-emerald-800 rounded-xl text-emerald-300 text-xs font-medium flex items-center gap-2">
+                  <CheckCircle2 size={16} /> Subscribed successfully! Check
+                  inbox.
+                </div>
+              ) : (
+                <form onSubmit={handleSubscribe} className="flex gap-2">
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter work email..."
+                    className="flex-1 px-3.5 py-2.5 bg-black/60 border border-neutral-700 rounded-xl text-xs text-white placeholder-gray-500 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none font-normal"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white text-xs font-medium uppercase tracking-wider rounded-xl transition-colors shrink-0"
+                  >
+                    Join
+                  </button>
+                </form>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Bottom Strip */}
-      <div style={{ background: '#222226', color: '#a0a0a0', padding: '1.5rem 0', fontSize: '0.8rem' }}>
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
-          <p>Copyright © {new Date().getFullYear()} Inked, All rights reserved. Powered by InkedDev</p>
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <Link to="/legal/terms" style={{ color: 'inherit', textDecoration: 'none' }}>Terms of Use</Link>
-            <Link to="/legal/privacy" style={{ color: 'inherit', textDecoration: 'none' }}>Privacy Policy</Link>
-            <Link to="/legal/cookie" style={{ color: 'inherit', textDecoration: 'none' }}>Cookie Policy</Link>
+      {/* ── Bottom Copyright Bar ── */}
+      <div className="border-t border-neutral-800/80 bg-black/40 py-6 font-sans">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500 font-normal">
+          <div className="flex items-center gap-2">
+            <span>© {new Date().getFullYear()} INKED Fact News Network.</span>
+            <span>All rights reserved.</span>
+          </div>
+
+          <div className="flex items-center gap-6 font-normal">
+            <Link
+              to="/legal/terms"
+              className="hover:text-gray-300 transition-colors no-underline"
+            >
+              Terms of Service
+            </Link>
+            <Link
+              to="/legal/privacy"
+              className="hover:text-gray-300 transition-colors no-underline"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              to="/legal/content-policy"
+              className="hover:text-gray-300 transition-colors no-underline"
+            >
+              Content Standards
+            </Link>
           </div>
         </div>
       </div>
     </footer>
-  )
+  );
 }

@@ -25,6 +25,16 @@ def _normalise_dt(date_str: str):
     return date_str[:10], ''
 
 
+def _clean_content(text: str) -> str:
+    """Strip truncation suffixes like [+1234 chars] from API feeds."""
+    if not text:
+        return ''
+    import re
+    cleaned = re.sub(r'\[\+?\s*\d+\s*(?:chars?|characters?)\s*\]', '', text, flags=re.IGNORECASE)
+    cleaned = re.sub(r'\[\s*\.{3}\s*\d+\s*(?:chars?|characters?)\s*\]', '', cleaned, flags=re.IGNORECASE)
+    return cleaned.strip()
+
+
 # ─── Currents API ─────────────────────────────────────────────────────────────
 def fetch_currents(limit=10):
     key = os.getenv('CURRENTS_API_KEY', '')
@@ -67,8 +77,8 @@ def fetch_newsdata(limit=10):
             date, time = _normalise_dt(a.get('pubDate', ''))
             articles.append({
                 'headline': a.get('title', ''),
-                'description': a.get('description', ''),
-                'detailed_description': a.get('content', '') or a.get('description', ''),
+                'description': _clean_content(a.get('description', '')),
+                'detailed_description': _clean_content(a.get('content', '') or a.get('description', '')),
                 'link': a.get('link', ''),
                 'image_link': a.get('image_url', ''),
                 'source': a.get('source_id', 'NewsData.io'),
@@ -95,8 +105,8 @@ def fetch_gnews(limit=10):
             date, time = _normalise_dt(a.get('publishedAt', ''))
             articles.append({
                 'headline': a.get('title', ''),
-                'description': a.get('description', ''),
-                'detailed_description': a.get('content', '') or a.get('description', ''),
+                'description': _clean_content(a.get('description', '')),
+                'detailed_description': _clean_content(a.get('content', '') or a.get('description', '')),
                 'link': a.get('url', ''),
                 'image_link': a.get('image', ''),
                 'source': a.get('source', {}).get('name', 'GNews'),
