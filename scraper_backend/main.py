@@ -3,6 +3,8 @@ import sys
 import threading
 import time
 import datetime
+
+
 from fastapi import FastAPI, Query
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
@@ -59,12 +61,7 @@ def trigger_scrape(
     # ─── 2. API Fetchers ──────────────────────────────────────────────────
     if use_apis:
         try:
-            # Add scraper_core to path so we can import api_fetchers
-            scraper_pkg = os.path.join(os.path.dirname(__file__), 'scraper_core')
-            if scraper_pkg not in sys.path:
-                sys.path.insert(0, scraper_pkg)
-
-            from scraper_core.api_fetchers import fetch_all_api_sources
+            from scraper_core.scraper_core.api_fetchers import fetch_all_api_sources
             from pymongo import MongoClient
 
             mongo_uri = os.getenv('MONGODB_URI', 'mongodb://localhost:27017/scraper')
@@ -105,7 +102,7 @@ def trigger_scrape(
 @app.get("/sources")
 def list_sources():
     """List all configured sources and their enabled status."""
-    from scraper_core.spiders.rss_spider import RSS_FEEDS
+    from scraper_core.scraper_core.spiders.rss_spider import RSS_FEEDS
     rss_sources = {name: {"type": "rss", "enabled": os.getenv('ENABLE_RSS', 'true').lower() == 'true', "url": url}
                    for name, url in RSS_FEEDS.items()}
     api_sources = {
