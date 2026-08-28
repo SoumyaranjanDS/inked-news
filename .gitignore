@@ -64,6 +64,9 @@ dist-ssr/
 build/
 .next/
 
+# ─── React Native App (not deployed to server) ────────
+inked/
+
 # ─── OS & IDE Files ────────────────────────────────────
 .DS_Store
 .DS_Store?
