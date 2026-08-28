@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-    
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -20,26 +20,26 @@ jobs:
             cd /var/www/inked-website
             git fetch origin main
             git reset --hard origin/main
-            
+
             # 2. Deploy Website
             cd inked-website
             npm ci || npm install
             npm run build
             cd ..
-            
+
             # 3. Deploy Main Backend
             cd main_backend
             npm install
             pm2 restart main_backend
             cd ..
-            
+
             # 4. Deploy Scraper
             cd scraper_backend
             # Optional: source venv/bin/activate if using virtual environment
             pip3 install -r requirements.txt
             pm2 restart scraper_backend
             cd ..
-            
+
             # 5. Deploy Optimizer
             cd optimizer_engine
             # Optional: source venv/bin/activate if using virtual environment
