@@ -40,7 +40,7 @@ app = FastAPI(docs_url=None, redoc_url=None)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["http://localhost:5173", "https://inkedfact.online", "https://www.inkedfact.online"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

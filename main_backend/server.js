@@ -9,7 +9,11 @@ const MONGODB_URI =
   process.env.MONGODB_URI || "mongodb://localhost:27017/inked";
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+  origin: ['http://localhost:5173', 'https://inkedfact.online', 'https://www.inkedfact.online'],
+  optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Database Connection
