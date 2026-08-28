@@ -191,7 +191,7 @@ export default function AdminDashboard({ _theme }) {
         `[${new Date().toLocaleTimeString()}] ❌ Scraper trigger error: ${err.message}`,
         ...prev
       ]);
-      setMessage({ type: 'error', text: 'Failed to trigger scraper service.' });
+      setMessage({ type: 'error', text: 'Failed to trigger <> scraper service.' });
     } finally {
       setScraperRunning(false);
     }
