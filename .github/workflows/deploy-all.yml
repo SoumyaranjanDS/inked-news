@@ -24,6 +24,12 @@ jobs:
             # 2. Deploy Website
             cd inked-website
             npm ci || npm install
+            # Write production environment variables before building
+            cat > .env << 'EOF'
+VITE_MAIN_BACKEND_URL=https://inkedfact.online
+VITE_SCRAPER_URL=https://inkedfact.online
+VITE_OPTIMIZER_URL=https://inkedfact.online
+EOF
             npm run build
             cd ..
             
