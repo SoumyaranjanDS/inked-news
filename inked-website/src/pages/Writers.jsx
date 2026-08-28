@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { mainApiClient } from '../lib/axios'
 import { CheckCircle, ArrowRight, AlertCircle } from 'lucide-react'
 import Masthead from '../components/Masthead'
 import Footer from '../components/Footer'
@@ -17,11 +18,7 @@ export default function Writers({ theme, toggleTheme }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await fetch('http://localhost:5000/api/waitlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, role: 'writer' }),
-      })
+      await mainApiClient.post('/api/waitlist', { email, role: 'writer' })
     } catch {}
     setSubmitted(true)
   }

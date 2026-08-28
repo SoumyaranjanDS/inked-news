@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { CheckCircle } from 'lucide-react'
 import { LegalLayout } from './LegalLayout'
+import { mainApiClient } from '../../lib/axios'
 
 export default function Takedown({ theme, toggleTheme }) {
   const [form, setForm] = useState({ name: '', email: '', organisation: '', url: '', reason: '', description: '' })
@@ -13,11 +14,7 @@ export default function Takedown({ theme, toggleTheme }) {
     e.preventDefault()
     setSubmitting(true)
     try {
-      await fetch('http://localhost:5000/api/takedown', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form),
-      })
+      await mainApiClient.post('/api/takedown', form)
     } catch {}
     setSubmitted(true)
     setSubmitting(false)

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Calendar, MessageSquare } from 'lucide-react'
 import Masthead from '../components/Masthead'
 import Footer from '../components/Footer'
+import { mainApiClient } from '../lib/axios'
 
 // Map sources to colors (mock categories)
 const CATEGORY_MAP = {
@@ -28,8 +29,8 @@ export default function Home({ theme, toggleTheme }) {
     
     setFeedError(null)
     try {
-      const res = await fetch(`http://localhost:5000/api/feed?limit=30&page=${pageNum}`)
-      const data = await res.json()
+      const res = await mainApiClient.get(`/api/feed?limit=30&page=${pageNum}`)
+      const data = res.data
       if (data.success) {
         if (data.data.length < 30) setHasMore(false)
         if (append) {

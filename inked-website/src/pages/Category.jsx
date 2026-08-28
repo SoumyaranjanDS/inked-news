@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Masthead from '../components/Masthead'
 import Footer from '../components/Footer'
+import { mainApiClient } from '../lib/axios'
 
 export default function Category({ theme, toggleTheme }) {
   const { id } = useParams()
@@ -25,8 +26,8 @@ export default function Category({ theme, toggleTheme }) {
     
     setFeedError(null)
     try {
-      const res = await fetch(`http://localhost:5000/api/feed?limit=30&page=${pageNum}&category=${categoryId}`)
-      const data = await res.json()
+      const res = await mainApiClient.get(`/api/feed?limit=30&page=${pageNum}&category=${categoryId}`)
+      const data = res.data
       if (data.success) {
         if (data.data.length < 30) setHasMore(false)
         if (append) {
