@@ -46,6 +46,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/")
+def read_root():
+    return {"status": "Optimizer Engine is running healthy!"}
+
 class OptimizeRequest(BaseModel):
     headline: str
     text: str
