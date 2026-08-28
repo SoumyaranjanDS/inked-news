@@ -183,4 +183,4 @@ if __name__ == "__main__":
     
     # Run FastAPI server on port 8001
     print("Optimizer Engine API started on port 8001.")
-    uvicorn.run("main:app", host="0.0.0.0", port=8001, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=5002, reload=True)
