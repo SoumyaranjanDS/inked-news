@@ -3,7 +3,7 @@ import sys
 import threading
 import time
 import datetime
-
+import uvicorn
 
 from fastapi import FastAPI, Query
 from dotenv import load_dotenv
