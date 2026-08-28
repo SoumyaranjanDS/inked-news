@@ -30,9 +30,9 @@ jobs:
         working-directory: ./inked-website
         run: npm run build
         env:
-          VITE_MAIN_BACKEND_URL: https://inked-main-backend.onrender.com
-          VITE_SCRAPER_URL: https://inked-scraper.onrender.com
-          VITE_OPTIMIZER_URL: https://inked-optimizer.onrender.com
+          VITE_MAIN_BACKEND_URL: ${{ secrets.VITE_MAIN_BACKEND_URL }}
+          VITE_SCRAPER_URL: ${{ secrets.VITE_SCRAPER_URL }}
+          VITE_OPTIMIZER_URL: ${{ secrets.VITE_OPTIMIZER_URL }}
 
       - name: Copy files to EC2 via SCP
         uses: appleboy/scp-action@v0.1.7
