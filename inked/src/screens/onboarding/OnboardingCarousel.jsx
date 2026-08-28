@@ -17,8 +17,8 @@ const FEATURES = [
 ];
 
 const OnboardingCarousel = ({ navigation }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(30)).current;
+  const [fadeAnim] = React.useState(() => new Animated.Value(0));
+  const [slideAnim] = React.useState(() => new Animated.Value(30));
   const insets = useSafeAreaInsets();
 
   useEffect(() => {

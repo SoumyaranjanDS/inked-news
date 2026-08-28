@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
-import { MAIN_BACKEND_URL } from '@env';
+import { StyleSheet, Text, View, SafeAreaView, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { MAIN_BACKEND_URL } from '../../config/api';
+import { PreviewSkeleton } from '../../components/SkeletonLoader';
 
 // Removing MOCK_NEWS as we will fetch real news
 
@@ -39,7 +40,7 @@ const PersonalizedPreviewScreen = ({ route, navigation }) => {
 
         <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
           {loading ? (
-            <ActivityIndicator size="large" color="#111" style={{ marginTop: 50 }} />
+            <PreviewSkeleton />
           ) : (
             articles.map((news) => (
               <View key={news._id} style={styles.card}>

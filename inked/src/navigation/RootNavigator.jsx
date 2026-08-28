@@ -34,13 +34,16 @@ const RootNavigator = () => {
 
       {/* Main App */}
       <Stack.Screen name="Main" component={MainTabs} />
-      
+
       {/* Article Detail */}
       <Stack.Screen name="ArticleDetail" component={ArticleDetailScreen} />
       <Stack.Screen name="CategoryFeed" component={CategoryFeedScreen} />
 
       {/* Creator Flow */}
-      <Stack.Screen name="CreatorDashboard" component={CreatorDashboardScreen} />
+      <Stack.Screen
+        name="CreatorDashboard"
+        component={CreatorDashboardScreen}
+      />
       <Stack.Screen name="WriteArticle" component={WriteArticleScreen} />
       <Stack.Screen name="MyArticles" component={MyArticlesScreen} />
       <Stack.Screen name="Analytics" component={AnalyticsScreen} />
@@ -48,10 +51,10 @@ const RootNavigator = () => {
       <Stack.Screen name="IDVerification" component={IDVerificationScreen} />
 
       {/* Modals */}
-      <Stack.Screen 
-        name="AuthModal" 
-        component={AuthBottomSheetModal} 
-        options={{ presentation: 'transparentModal' }} 
+      <Stack.Screen
+        name="AuthModal"
+        component={AuthBottomSheetModal}
+        options={{ presentation: 'transparentModal' }}
       />
     </Stack.Navigator>
   );

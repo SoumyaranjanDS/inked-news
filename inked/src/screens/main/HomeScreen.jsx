@@ -2,12 +2,14 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   StyleSheet, Text, View, Image, TouchableOpacity,
   ActivityIndicator, RefreshControl, StatusBar, Dimensions,
-  ScrollView, PanResponder, Animated, useColorScheme
+  ScrollView, PanResponder, Animated, useColorScheme, BackHandler
 } from 'react-native';
-import { MAIN_BACKEND_URL } from '@env';
+import { MAIN_BACKEND_URL, safeFetch } from '../../config/api';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import { Bell, Heart, MessageCircle, Eye, Share, MoreHorizontal, CheckCircle2, TrendingUp, Globe2, Bookmark } from 'lucide-react-native';
+import { HomeSkeleton } from '../../components/SkeletonLoader';
 
 const { width, height } = Dimensions.get('window');
 const TREND_CARD_W = width * 0.72;
@@ -97,8 +99,8 @@ const WorldCard = ({ item, onPress }) => (
 // ForYouStack: isolated from ScrollView so vertical swipe is not stolen
 const ForYouStack = ({ items, onPress, onSwipeStart, onSwipeEnd }) => {
   const [stack, setStack] = useState(items.slice(0, 8));
-  const translateY = useRef(new Animated.Value(0)).current;
-  const opacity = useRef(new Animated.Value(1)).current;
+  const [translateY] = React.useState(() => new Animated.Value(0));
+  const [opacity] = React.useState(() => new Animated.Value(1));
 
   const dismissTop = useCallback(() => {
     Animated.parallel([
@@ -203,9 +205,9 @@ const HomeScreen = ({ navigation }) => {
 
   const fetchFeed = async () => {
     try {
-      const res = await fetch(`${MAIN_BACKEND_URL}/api/feed?limit=40&page=1`);
+      const res = await safeFetch('/api/feed?limit=40&page=1');
       const data = await res.json();
-      if (data.success) {
+      if (data && data.success && Array.isArray(data.data)) {
         const decorated = shuffle(data.data).map(item => ({
           ...item,
           likes: getRandomInt(100, 9999),
@@ -214,17 +216,33 @@ const HomeScreen = ({ navigation }) => {
         }));
         setArticles(decorated);
       }
-    } catch (err) { console.error('Feed error:', err); }
-    finally { setLoading(false); setRefreshing(false); }
+    } catch (err) {
+      console.warn('Feed warning:', err.message);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
   };
 
   useEffect(() => { fetchFeed(); }, []);
   const onRefresh = useCallback(() => { setRefreshing(true); fetchFeed(); }, []);
 
+  // Exit app on Android hardware back press when on Home tab
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        BackHandler.exitApp();
+        return true;
+      };
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => subscription.remove();
+    }, [])
+  );
+
   if (loading) return (
-    <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', backgroundColor: isDark ? '#0D0D0D' : '#F5F5F5' }]}>
+    <View style={[styles.container, { backgroundColor: isDark ? '#0D0D0D' : '#F5F5F5' }]}>
       <StatusBar barStyle={isDark ? "light-content" : "dark-content"} backgroundColor="transparent" translucent />
-      <ActivityIndicator size="large" color="#D32F2F" />
+      <HomeSkeleton isDark={isDark} insets={insets} />
     </View>
   );
 
@@ -254,7 +272,7 @@ const HomeScreen = ({ navigation }) => {
         </View>
 
         {/* CATEGORIES */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.catScroll}>
+        <ScrollView horizontal nestedScrollEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.catScroll}>
           {CATEGORIES.map(cat => (
             <TouchableOpacity key={cat} onPress={() => setActiveCategory(cat)} style={[styles.catPill, { backgroundColor: isDark ? '#1A1A1A' : '#FFF', borderColor: isDark ? '#333' : '#E8E8E8' }, activeCategory === cat && styles.catPillActive]}>
               <Text style={[styles.catText, { color: isDark ? '#AAA' : '#666' }, activeCategory === cat && styles.catTextActive]}>{cat}</Text>
@@ -264,7 +282,7 @@ const HomeScreen = ({ navigation }) => {
 
         {/* TRENDING */}
         <SectionHeader title="Trending Now" icon={TrendingUp} color="#D32F2F" onSeeAll={() => {}} isDark={isDark} />
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hScroll}>
+        <ScrollView horizontal nestedScrollEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hScroll}>
           {trending.map((item, i) => <TrendingCard key={item._id || i} item={item} onPress={() => navigation.navigate('ArticleDetail', { article: item })} />)}
         </ScrollView>
 
@@ -274,7 +292,7 @@ const HomeScreen = ({ navigation }) => {
 
         {/* WORLD */}
         <SectionHeader title="World News" icon={Globe2} color={isDark ? '#FFF' : '#333'} onSeeAll={() => {}} isDark={isDark} />
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hScroll}>
+        <ScrollView horizontal nestedScrollEnabled showsHorizontalScrollIndicator={false} contentContainerStyle={styles.hScroll}>
           {worldNews.map((item, i) => <WorldCard key={item._id || i} item={item} onPress={() => navigation.navigate('ArticleDetail', { article: item })} />)}
         </ScrollView>
 

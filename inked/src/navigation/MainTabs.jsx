@@ -1,14 +1,24 @@
-import React, { useRef, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Animated, useColorScheme } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Animated,
+  Dimensions,
+  ScrollView,
+  BackHandler,
+  useColorScheme,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Home, Search, User } from 'lucide-react-native';
+import { useFocusEffect } from '@react-navigation/native';
 
 import HomeScreen from '../screens/main/HomeScreen';
 import SearchScreen from '../screens/main/SearchScreen';
 import ProfileScreen from '../screens/main/ProfileScreen';
 
-const Tab = createBottomTabNavigator();
+const { width } = Dimensions.get('window');
 
 const TAB_ITEMS = [
   { name: 'Search', label: 'Discover', Icon: Search },
@@ -17,8 +27,8 @@ const TAB_ITEMS = [
 ];
 
 const TabItem = ({ item, isFocused, onPress, isDark }) => {
-  const scaleAnim = useRef(new Animated.Value(1)).current;
-  const dotAnim = useRef(new Animated.Value(isFocused ? 1 : 0)).current;
+  const [scaleAnim] = React.useState(() => new Animated.Value(isFocused ? 1.12 : 1));
+  const [dotAnim] = React.useState(() => new Animated.Value(isFocused ? 1 : 0));
 
   useEffect(() => {
     Animated.parallel([
@@ -33,7 +43,7 @@ const TabItem = ({ item, isFocused, onPress, isDark }) => {
         useNativeDriver: true,
       }),
     ]).start();
-  }, [isFocused]);
+  }, [isFocused, scaleAnim, dotAnim]);
 
   const { Icon } = item;
 
@@ -50,58 +60,144 @@ const TabItem = ({ item, isFocused, onPress, isDark }) => {
           strokeWidth={isFocused ? 2.5 : 1.8}
         />
       </Animated.View>
-      <Text style={[styles.label, { color: isDark ? '#888' : '#9E9E9E' }, isFocused && styles.labelActive]}>
+      <Text
+        style={[
+          styles.label,
+          { color: isDark ? '#888' : '#9E9E9E' },
+          isFocused && styles.labelActive,
+        ]}
+      >
         {item.label}
       </Text>
-      <Animated.View style={[styles.dot, { opacity: dotAnim, transform: [{ scaleX: dotAnim }] }]} />
+      <Animated.View
+        style={[styles.dot, { opacity: dotAnim, transform: [{ scaleX: dotAnim }] }]}
+      />
     </TouchableOpacity>
   );
 };
 
-const CustomTabBar = ({ state, descriptors, navigation }) => {
+const MainTabs = ({ navigation }) => {
   const insets = useSafeAreaInsets();
   const theme = useColorScheme();
   const isDark = theme === 'dark';
 
-  return (
-    <View style={[
-      styles.container, 
-      { 
-        paddingBottom: Math.max(insets.bottom, 8),
-        backgroundColor: isDark ? '#111' : '#FFF',
-        borderTopColor: isDark ? '#222' : '#F0F0F0'
+  const [activeIndex, setActiveIndex] = useState(1); // Default to Home (Index 1)
+  const scrollRef = useRef(null);
+
+  // Initialize position to Home tab on mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTo({ x: width, animated: false });
       }
-    ]}>
-      <View style={styles.bar}>
-        {state.routes.map((route, index) => {
-          const item = TAB_ITEMS.find(t => t.name === route.name);
-          const isFocused = state.index === index;
-          const onPress = () => {
-            const event = navigation.emit({ type: 'tabPress', target: route.key, canPreventDefault: true });
-            if (!isFocused && !event.defaultPrevented) navigation.navigate(route.name);
-          };
-          return <TabItem key={route.key} item={item} isFocused={isFocused} onPress={onPress} isDark={isDark} />;
-        })}
+    }, 50);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Hardware Back Button Handler:
+  // - If on Home tab (index 1) -> Exit app immediately.
+  // - If on Search (0) or Profile (2) -> Return to Home tab.
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (activeIndex === 1) {
+          BackHandler.exitApp();
+          return true;
+        } else {
+          setActiveIndex(1);
+          scrollRef.current?.scrollTo({ x: width, animated: true });
+          return true;
+        }
+      };
+
+      const subscription = BackHandler.addEventListener('hardwareBackPress', onBackPress);
+      return () => subscription.remove();
+    }, [activeIndex])
+  );
+
+  const handleTabPress = (index) => {
+    setActiveIndex(index);
+    scrollRef.current?.scrollTo({ x: index * width, animated: true });
+  };
+
+  const handleMomentumScrollEnd = (e) => {
+    const offsetX = e.nativeEvent.contentOffset.x;
+    const newIndex = Math.round(offsetX / width);
+    if (newIndex !== activeIndex && newIndex >= 0 && newIndex <= 2) {
+      setActiveIndex(newIndex);
+    }
+  };
+
+  return (
+    <View style={[styles.mainWrapper, { backgroundColor: isDark ? '#0D0D0D' : '#F5F5F5' }]}>
+      {/* Horizontal Swipeable Pager with nestedScrollEnabled */}
+      <ScrollView
+        ref={scrollRef}
+        horizontal
+        pagingEnabled
+        nestedScrollEnabled
+        directionalLockEnabled
+        showsHorizontalScrollIndicator={false}
+        bounces={false}
+        onMomentumScrollEnd={handleMomentumScrollEnd}
+        contentOffset={{ x: width, y: 0 }}
+        style={styles.pager}
+      >
+        {/* Tab 0: Discover / Search Screen */}
+        <View style={{ width, flex: 1 }}>
+          <SearchScreen navigation={navigation} />
+        </View>
+
+        {/* Tab 1: Home Screen */}
+        <View style={{ width, flex: 1 }}>
+          <HomeScreen navigation={navigation} />
+        </View>
+
+        {/* Tab 2: Profile Screen */}
+        <View style={{ width, flex: 1 }}>
+          <ProfileScreen navigation={navigation} />
+        </View>
+      </ScrollView>
+
+      {/* Bottom Tab Bar */}
+      <View
+        style={[
+          styles.container,
+          {
+            paddingBottom: Math.max(insets.bottom, 8),
+            backgroundColor: isDark ? '#111' : '#FFF',
+            borderTopColor: isDark ? '#222' : '#F0F0F0',
+          },
+        ]}
+      >
+        <View style={styles.bar}>
+          {TAB_ITEMS.map((item, index) => {
+            const isFocused = activeIndex === index;
+            return (
+              <TabItem
+                key={item.name}
+                item={item}
+                isFocused={isFocused}
+                onPress={() => handleTabPress(index)}
+                isDark={isDark}
+              />
+            );
+          })}
+        </View>
       </View>
     </View>
   );
 };
 
-const MainTabs = () => (
-  <Tab.Navigator
-    initialRouteName="Home"
-    tabBar={(props) => <CustomTabBar {...props} />}
-    screenOptions={{ headerShown: false }}
-  >
-    <Tab.Screen name="Search" component={SearchScreen} />
-    <Tab.Screen name="Home" component={HomeScreen} />
-    <Tab.Screen name="Profile" component={ProfileScreen} />
-  </Tab.Navigator>
-);
-
 export default MainTabs;
 
 const styles = StyleSheet.create({
+  mainWrapper: {
+    flex: 1,
+  },
+  pager: {
+    flex: 1,
+  },
   container: {
     borderTopWidth: 1,
     shadowColor: '#000',

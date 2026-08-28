@@ -80,3 +80,8 @@ credentials.txt
 NewsPulse_Case_Study_Extracted_utf8.txt
 NewsPulse_Case_Study_Extracted.txt
 NewsPulse_Case_Study.docx
+
+Intelligent Large-Scale News-Scraper Engine_ An Engineering, Legal, and Intelligence Case Study.pdf
+
+# ─── Firebase Secrets (never commit) ──────────────────
+main_backend/config/firebase-service-account.json

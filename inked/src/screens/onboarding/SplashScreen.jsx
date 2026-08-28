@@ -10,9 +10,9 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SplashScreen = ({ navigation }) => {
-  const logoScale = useRef(new Animated.Value(0.8)).current;
-  const logoOpacity = useRef(new Animated.Value(0)).current;
-  const exitOpacity = useRef(new Animated.Value(1)).current;
+  const [logoScale] = React.useState(() => new Animated.Value(0.8));
+  const [logoOpacity] = React.useState(() => new Animated.Value(0));
+  const [exitOpacity] = React.useState(() => new Animated.Value(1));
 
   useEffect(() => {
     // Short, direct animation
