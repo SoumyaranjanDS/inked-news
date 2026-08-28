@@ -30,16 +30,16 @@ jobs:
             # 3. Deploy Main Backend
             cd main_backend
             npm install
-            pm2 restart main_backend
+            pm2 restart main_backend --update-env
             cd ..
             
             # 4. Deploy Scraper
             cd scraper_backend
             pip3 install -r requirements.txt
-            pm2 restart scraper_backend
+            pm2 restart scraper_backend --update-env
             cd ..
             
             # 5. Deploy Optimizer
             cd optimizer_engine
             pip3 install -r requirements.txt
-            pm2 restart optimizer_engine
+            pm2 restart optimizer_engine --update-env
