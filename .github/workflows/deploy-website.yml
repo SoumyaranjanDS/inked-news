@@ -12,18 +12,15 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: SSH into server and deploy
+        uses: appleboy/ssh-action@v1.0.3
         with:
-          node-version: '20'
-
-      - name: Install Dependencies
-        working-directory: ./inked-website
-        run: npm install
-
-      - name: Build React App
-        working-directory: ./inked-website
-        run: npm run build
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /var/www/inked-website
+            git pull origin main
+            cd inked-website
+            npm install
+            npm run build
