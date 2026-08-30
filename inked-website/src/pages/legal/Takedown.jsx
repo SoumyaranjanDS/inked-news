@@ -36,7 +36,7 @@ export default function Takedown({ theme, toggleTheme }) {
       toggleTheme={toggleTheme}
     >
       <p>
-        If content on Inked appears without your permission, infringes your
+        If content on NewsOnTip appears without your permission, infringes your
         copyright, or violates our Content Policy, use this form to submit a
         formal takedown request. We review all requests within{" "}
         <strong style={{ color: "var(--text)" }}>2 business days</strong> and
@@ -188,7 +188,7 @@ export default function Takedown({ theme, toggleTheme }) {
                   textTransform: "uppercase",
                 }}
               >
-                URL of content on Inked *
+                URL of content on NewsOnTip *
               </label>
               <input
                 type="text"
@@ -294,14 +294,14 @@ export default function Takedown({ theme, toggleTheme }) {
         <p style={{ fontSize: "0.88rem", color: "var(--caption-gray)" }}>
           Prefer email? Send your request directly to{" "}
           <a
-            href="mailto:takedown@inked.app"
+            href="mailto:takedown@newsontip.app"
             style={{
               color: "var(--masthead-red)",
               textDecoration: "none",
               fontWeight: 600,
             }}
           >
-            takedown@inked.app
+            takedown@newsontip.app
           </a>{" "}
           with the same information listed above.
         </p>
