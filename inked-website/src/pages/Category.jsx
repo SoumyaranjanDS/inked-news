@@ -202,7 +202,7 @@ export default function Category({ theme, toggleTheme }) {
                       />
                     ) : (
                       <div className="w-full h-full bg-gray-100 flex items-center justify-center font-serif font-medium text-xs text-gray-400">
-                        INKED ARCHIVE
+                        NEWSONTIP ARCHIVE
                       </div>
                     )}
                     <span className="absolute top-3 left-3 bg-neutral-900/80 backdrop-blur-md text-white text-[9px] font-semibold uppercase tracking-wider px-2.5 py-0.5 rounded-full font-sans">
