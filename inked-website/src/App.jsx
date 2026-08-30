@@ -16,12 +16,12 @@ import { Agentation } from "agentation";
 
 export default function App() {
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem("inked-theme") || "light";
+    return localStorage.getItem("newsontip-theme") || "light";
   });
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("inked-theme", theme);
+    localStorage.setItem("newsontip-theme", theme);
   }, [theme]);
 
   const toggleTheme = () => setTheme((t) => (t === "light" ? "dark" : "light"));
