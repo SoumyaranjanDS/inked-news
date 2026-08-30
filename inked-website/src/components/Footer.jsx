@@ -27,7 +27,7 @@ export default function Footer() {
               className="inline-flex items-center gap-1 group no-underline"
             >
               <span className="font-sans font-semibold text-3xl tracking-tight text-white group-hover:text-red-500 transition-colors">
-                INKED<span className="text-red-600">.</span>
+                NEWSONTIP<span className="text-red-600">.</span>
               </span>
             </Link>
 
@@ -103,7 +103,7 @@ export default function Footer() {
           {/* Column 3: Platform & Transparency (2 cols) */}
           <div className="lg:col-span-2 space-y-3 font-sans">
             <h4 className="text-xs font-semibold uppercase tracking-widest text-white">
-              About Inked
+              About NewsOnTip
             </h4>
             <ul className="space-y-2 text-xs font-normal">
               <li>
@@ -111,7 +111,7 @@ export default function Footer() {
                   to="/how-it-works"
                   className="hover:text-red-400 transition-colors no-underline"
                 >
-                  How Inked Works
+                  How NewsOnTip Works
                 </Link>
               </li>
               <li>
@@ -186,7 +186,7 @@ export default function Footer() {
       <div className="border-t border-neutral-800/80 bg-black/40 py-6 font-sans">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-gray-500 font-normal">
           <div className="flex items-center gap-2">
-            <span>© {new Date().getFullYear()} INKED Fact News Network.</span>
+            <span>© {new Date().getFullYear()} NEWSONTIP Fact News Network.</span>
             <span>All rights reserved.</span>
           </div>
 
