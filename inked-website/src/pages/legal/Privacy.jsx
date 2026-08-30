@@ -4,11 +4,11 @@ import { LegalLayout, Clause } from './LegalLayout'
 export default function Privacy({ theme, toggleTheme }) {
   return (
     <LegalLayout eyebrow="Legal" title="Privacy Policy" theme={theme} toggleTheme={toggleTheme}>
-      <p>This policy explains what data Inked collects, why, how long we keep it, and your rights over it.</p>
+      <p>This policy explains what data NewsOnTip collects, why, how long we keep it, and your rights over it.</p>
 
       <Clause title="1. Data we collect">
         <p><strong style={{ color: 'var(--text)' }}>For all users:</strong> Device type, OS version, approximate location (country/city level), content read, session duration, and app events (opens, taps, scrolls). This data is used to improve the app and show relevant content.</p>
-        <p style={{ marginTop: '0.75rem' }}><strong style={{ color: 'var(--text)' }}>For account holders:</strong> Email address, username, and reading preferences. If you are a writer: identity verification documents (stored encrypted, never displayed publicly), bank account details for earnings payouts (processed by a licensed payment provider, not stored on Inked servers).</p>
+        <p style={{ marginTop: '0.75rem' }}><strong style={{ color: 'var(--text)' }}>For account holders:</strong> Email address, username, and reading preferences. If you are a writer: identity verification documents (stored encrypted, never displayed publicly), bank account details for earnings payouts (processed by a licensed payment provider, not stored on NewsOnTip servers).</p>
       </Clause>
 
       <Clause title="2. What we do not collect">
@@ -32,15 +32,15 @@ export default function Privacy({ theme, toggleTheme }) {
       </Clause>
 
       <Clause title="6. Your rights">
-        <p>You can: access all personal data we hold about you, correct inaccurate data, request deletion of your account and personal data, and export your published articles. To exercise these rights: <a href="mailto:privacy@inked.app" style={{ color: 'var(--masthead-red)', textDecoration: 'none' }}>privacy@inked.app</a>. We respond within 30 days.</p>
+        <p>You can: access all personal data we hold about you, correct inaccurate data, request deletion of your account and personal data, and export your published articles. To exercise these rights: <a href="mailto:privacy@newsontip.app" style={{ color: 'var(--masthead-red)', textDecoration: 'none' }}>privacy@newsontip.app</a>. We respond within 30 days.</p>
       </Clause>
 
       <Clause title="7. Cookies">
-        <p>The Inked app does not use tracking cookies. The website uses only strictly necessary session cookies and does not use advertising or analytics cookies from third-party networks.</p>
+        <p>The NewsOnTip app does not use tracking cookies. The website uses only strictly necessary session cookies and does not use advertising or analytics cookies from third-party networks.</p>
       </Clause>
 
       <Clause title="8. Contact">
-        <p>Privacy questions: <a href="mailto:privacy@inked.app" style={{ color: 'var(--masthead-red)', textDecoration: 'none' }}>privacy@inked.app</a></p>
+        <p>Privacy questions: <a href="mailto:privacy@newsontip.app" style={{ color: 'var(--masthead-red)', textDecoration: 'none' }}>privacy@newsontip.app</a></p>
       </Clause>
     </LegalLayout>
   )
