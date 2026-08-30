@@ -4,9 +4,9 @@ import { LegalLayout, Clause } from './LegalLayout'
 export default function ContentPolicy({ theme, toggleTheme }) {
   return (
     <LegalLayout eyebrow="Legal" title="Content & Moderation Policy" theme={theme} toggleTheme={toggleTheme}>
-      <p>This policy defines the standards for all original content published by writers on Inked. Aggregated third-party news is subject to the editorial standards of its original publisher — this policy applies to Inked-native articles only.</p>
+      <p>This policy defines the standards for all original content published by writers on NewsOnTip. Aggregated third-party news is subject to the editorial standards of its original publisher — this policy applies to NewsOnTip-native articles only.</p>
 
-      <Clause title="1. What is required of every Inked article">
+      <Clause title="1. What is required of every NewsOnTip article">
         <ul style={{ paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
           {[
             'Every factual claim must be supported by a cited source (a named publication, study, official statement, or on-the-record interview)',
@@ -36,7 +36,7 @@ export default function ContentPolicy({ theme, toggleTheme }) {
       </Clause>
 
       <Clause title="3. Review process">
-        <p>Every article submitted by a writer is reviewed by an Inked moderator before publication. We check for compliance with this policy. Review typically completes within 24 hours of submission. During periods of high volume, this may extend to 48 hours.</p>
+        <p>Every article submitted by a writer is reviewed by an NewsOnTip moderator before publication. We check for compliance with this policy. Review typically completes within 24 hours of submission. During periods of high volume, this may extend to 48 hours.</p>
         <p style={{ marginTop: '0.75rem' }}>If an article is declined, the writer receives a specific, written explanation of which policy clause was triggered and, where possible, what change would make the article publishable.</p>
       </Clause>
 
@@ -45,7 +45,7 @@ export default function ContentPolicy({ theme, toggleTheme }) {
       </Clause>
 
       <Clause title="5. Appeals">
-        <p>Writers who believe a moderation decision was incorrect may appeal within 14 days by emailing <a href="mailto:moderation@inked.app" style={{ color: 'var(--masthead-red)', textDecoration: 'none' }}>moderation@inked.app</a> with the article in question and the basis for the appeal. Appeals are reviewed by a different moderator from the original decision. We respond within 7 business days.</p>
+        <p>Writers who believe a moderation decision was incorrect may appeal within 14 days by emailing <a href="mailto:moderation@newsontip.app" style={{ color: 'var(--masthead-red)', textDecoration: 'none' }}>moderation@newsontip.app</a> with the article in question and the basis for the appeal. Appeals are reviewed by a different moderator from the original decision. We respond within 7 business days.</p>
       </Clause>
 
       <Clause title="6. Repeat violations">
@@ -53,7 +53,7 @@ export default function ContentPolicy({ theme, toggleTheme }) {
       </Clause>
 
       <Clause title="7. Contact">
-        <p>Moderation questions: <a href="mailto:moderation@inked.app" style={{ color: 'var(--masthead-red)', textDecoration: 'none' }}>moderation@inked.app</a></p>
+        <p>Moderation questions: <a href="mailto:moderation@newsontip.app" style={{ color: 'var(--masthead-red)', textDecoration: 'none' }}>moderation@newsontip.app</a></p>
       </Clause>
     </LegalLayout>
   )
