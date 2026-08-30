@@ -33,8 +33,8 @@ serving_collection = get_db_safe(main_client, 'main')['serving_articles']
 admin_settings_collection = get_db_safe(main_client, 'main')['admin_settings']
 moderation_log = get_db_safe(optimizer_client, 'optimizer')['moderation_log']
 
-# Ensure TTL index is set on the serving collection (expires after 2 days = 172800s)
-serving_collection.create_index("created_at", expireAfterSeconds=172800)
+# Ensure TTL index is set on the serving collection (expires after 2 days = 172800s via expireAt)
+serving_collection.create_index("expireAt", expireAfterSeconds=0)
 
 app = FastAPI(docs_url=None, redoc_url=None)
 
