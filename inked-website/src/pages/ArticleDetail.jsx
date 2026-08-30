@@ -166,7 +166,7 @@ export default function ArticleDetail({ theme, toggleTheme }) {
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: article?.headline || 'Inked News Article',
+        title: article?.headline || 'NewsOnTip Article',
         url: window.location.href,
       }).catch(() => {});
     } else {
@@ -364,7 +364,7 @@ export default function ArticleDetail({ theme, toggleTheme }) {
                   {article.source ? article.source.charAt(0) : 'I'}
                 </div>
                 <div>
-                  <div className="font-medium text-neutral-900">{article.source || 'Inked News Service'}</div>
+                  <div className="font-medium text-neutral-900">{article.source || 'NewsOnTip Service'}</div>
                   <div className="text-gray-500 font-normal">Verified Editorial Wire</div>
                 </div>
               </div>
@@ -392,7 +392,7 @@ export default function ArticleDetail({ theme, toggleTheme }) {
                 />
                 <figcaption className="p-3 bg-gray-50 text-[11px] text-gray-500 font-normal border-t border-gray-100 flex items-center justify-between font-sans">
                   <span>Photo Source: {article.source || 'Official Wire'}</span>
-                  <span>Inked Verified Archive</span>
+                  <span>NewsOnTip Verified Archive</span>
                 </figcaption>
               </figure>
             )}
@@ -439,7 +439,7 @@ export default function ArticleDetail({ theme, toggleTheme }) {
                 <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200 space-y-4">
                   <h4 className="font-serif font-medium text-lg text-neutral-900">Executive Summary Highlights:</h4>
                   <ul className="space-y-3 list-disc list-inside text-gray-700 font-normal">
-                    <li>{article.summary || article.description || 'Core news briefing provided by Inked News Desk.'}</li>
+                    <li>{article.summary || article.description || 'Core news briefing provided by NewsOnTip Desk.'}</li>
                     <li>Verified source dispatch provided via <strong>{article.source}</strong> wire.</li>
                     <li>Fact-checked against editorial safety standards.</li>
                   </ul>
@@ -511,7 +511,7 @@ export default function ArticleDetail({ theme, toggleTheme }) {
               <div className="space-y-3 text-xs font-normal">
                 <div className="flex justify-between py-1 border-b border-gray-200/60 text-gray-500">
                   <span>Source Outlet</span>
-                  <span className="font-medium text-gray-900">{article.source || 'Inked News'}</span>
+                  <span className="font-medium text-gray-900">{article.source || 'NewsOnTip'}</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-gray-200/60 text-gray-500">
                   <span>Verification Status</span>
@@ -663,7 +663,7 @@ export default function ArticleDetail({ theme, toggleTheme }) {
                         />
                       ) : (
                         <div className="w-full h-full bg-gray-100 flex items-center justify-center font-serif font-medium text-xs text-gray-400">
-                          INKED NEWS
+                          NEWSONTIP NEWS
                         </div>
                       )}
                       <div className="absolute top-2.5 left-2.5">
