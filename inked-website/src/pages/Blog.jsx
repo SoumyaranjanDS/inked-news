@@ -12,7 +12,7 @@ export default function Blog({ theme, toggleTheme }) {
         <div className="container" style={{ padding: '3rem 1.5rem' }}>
           <p className="eyebrow" style={{ marginBottom: '0.75rem' }}>Blog · Press</p>
           <h1 className="font-serif" style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 900, color: 'var(--text)', lineHeight: 1.15 }}>
-            From the Inked team.
+            From the NewsOnTip team.
           </h1>
         </div>
       </div>
@@ -29,7 +29,7 @@ export default function Blog({ theme, toggleTheme }) {
         </p>
         <div style={{ paddingTop: '1.5rem', borderTop: '1px solid var(--rule-gray)', display: 'inline-flex', alignItems: 'center', gap: '0.6rem', fontSize: '0.88rem', color: 'var(--caption-gray)' }}>
           <PenLine size={15} style={{ color: 'var(--masthead-red)' }} />
-          Want to write for Inked? <a href="/writers" style={{ color: 'var(--masthead-red)', textDecoration: 'none', fontWeight: 600 }}>Apply here →</a>
+          Want to write for NewsOnTip? <a href="/writers" style={{ color: 'var(--masthead-red)', textDecoration: 'none', fontWeight: 600 }}>Apply here →</a>
         </div>
       </div>
 
