@@ -10,6 +10,7 @@ const userRoutes = require("./routes/user.routes");
 const feedRoutes = require("./routes/feed.routes");
 const adminRoutes = require("./routes/admin.routes");
 const marketingRoutes = require("./routes/marketing.routes");
+const interactionRoutes = require("./routes/interaction.routes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -32,6 +33,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api", feedRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/interactions", interactionRoutes);
 app.use("/api", marketingRoutes);
 
 // Connect to Database & Start Server
