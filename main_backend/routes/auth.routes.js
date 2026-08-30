@@ -28,7 +28,7 @@ router.get("/google/callback", (req, res) => {
     <!DOCTYPE html>
     <html>
       <head>
-        <title>Authenticating with Inked...</title>
+        <title>Authenticating with NewsOnTip...</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
           body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #0D0D0D; color: #FFF; text-align: center; }
@@ -45,7 +45,7 @@ router.get("/google/callback", (req, res) => {
           <div class="spinner" id="spinner"></div>
           <h2 id="statusTitle">Connecting Account...</h2>
           <p id="statusMsg">Please wait while we verify your Google credentials.</p>
-          <a href="#" id="returnBtn" class="btn" style="display:none;">Open Inked App</a>
+          <a href="#" id="returnBtn" class="btn" style="display:none;">Open NewsOnTip App</a>
         </div>
         <script>
           const hash = window.location.hash.substring(1);
@@ -80,7 +80,7 @@ router.get("/google/callback", (req, res) => {
                 const returnBtn = document.getElementById('returnBtn');
                 returnBtn.href = deepLink;
                 returnBtn.style.display = 'inline-block';
-                returnBtn.innerText = 'Return to Inked App';
+                returnBtn.innerText = 'Return to NewsOnTip App';
                 
                 // Attempt automatic deep link launch
                 window.location.href = deepLink;
@@ -116,7 +116,10 @@ router.post("/register", async (req, res) => {
     if (password.length < 6) {
       return res
         .status(400)
-        .json({ success: false, error: "Password must be at least 6 characters" });
+        .json({
+          success: false,
+          error: "Password must be at least 6 characters",
+        });
     }
 
     const cleanEmail = email.toLowerCase().trim();
@@ -124,11 +127,14 @@ router.post("/register", async (req, res) => {
     if (existing) {
       return res
         .status(400)
-        .json({ success: false, error: "An account with this email already exists" });
+        .json({
+          success: false,
+          error: "An account with this email already exists",
+        });
     }
 
     const avatar = `https://api.dicebear.com/7.x/initials/png?seed=${encodeURIComponent(
-      name || cleanEmail
+      name || cleanEmail,
     )}`;
     const user = await User.create({
       email: cleanEmail,
@@ -188,7 +194,9 @@ router.post("/google", async (req, res) => {
   try {
     const { googleId, email, name, avatar, preferredTopics } = req.body;
     if (!email) {
-      return res.status(400).json({ success: false, error: "Email is required" });
+      return res
+        .status(400)
+        .json({ success: false, error: "Email is required" });
     }
 
     const cleanEmail = email.toLowerCase().trim();
@@ -204,16 +212,19 @@ router.post("/google", async (req, res) => {
         avatar:
           avatar ||
           `https://api.dicebear.com/7.x/initials/png?seed=${encodeURIComponent(
-            name || cleanEmail
+            name || cleanEmail,
           )}`,
         preferredTopics: preferredTopics || ["Technology", "Space", "Business"],
         savedArticles: [],
         likedArticles: [],
       });
-      console.log(`👤 New Google user registered: ${user.email} (${user.name})`);
+      console.log(
+        `👤 New Google user registered: ${user.email} (${user.name})`,
+      );
     } else {
       if (avatar && !user.avatar) user.avatar = avatar;
-      if (name && (!user.name || user.name === "Inked Reader")) user.name = name;
+      if (name && (!user.name || user.name === "NewsOnTip Reader"))
+        user.name = name;
       if (googleId && !user.googleId) user.googleId = googleId;
       user.lastActive = new Date();
       await user.save();
