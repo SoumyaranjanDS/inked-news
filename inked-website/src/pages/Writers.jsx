@@ -35,7 +35,7 @@ export default function Writers({ theme, toggleTheme }) {
             Write independently.<br />Earn from real engagement.
           </h1>
           <p style={{ maxWidth: '560px', color: 'var(--caption-gray)', fontSize: '1.05rem', lineHeight: 1.7 }}>
-            Inked gives independent writers a platform where your earnings are determined by how much readers actually engage with your work — not how many followers you start with.
+            NewsOnTip gives independent writers a platform where your earnings are determined by how much readers actually engage with your work — not how many followers you start with.
           </p>
         </div>
       </div>
@@ -73,7 +73,7 @@ export default function Writers({ theme, toggleTheme }) {
           <section style={{ marginBottom: '4rem', borderLeft: '3px solid var(--masthead-red)', paddingLeft: '1.5rem' }}>
             <p className="eyebrow" style={{ marginBottom: '0.5rem' }}>Identity Verification — explained upfront</p>
             <p style={{ fontSize: '1rem', color: 'var(--text)', lineHeight: 1.7, maxWidth: '620px' }}>
-              To publish on Inked, you need to verify your identity once — a government-issued ID submitted through our secure verification flow. Your full name and ID number are <strong>never displayed publicly</strong>. This exists to ensure accountability, protect your byline from impersonation, and maintain the platform's credibility standard. It takes under five minutes.
+              To publish on NewsOnTip, you need to verify your identity once — a government-issued ID submitted through our secure verification flow. Your full name and ID number are <strong>never displayed publicly</strong>. This exists to ensure accountability, protect your byline from impersonation, and maintain the platform's credibility standard. It takes under five minutes.
             </p>
           </section>
         </RevealSection>
@@ -87,14 +87,14 @@ export default function Writers({ theme, toggleTheme }) {
               Engagement-weighted pool distribution.
             </h2>
             <p style={{ fontSize: '1rem', color: 'var(--caption-gray)', lineHeight: 1.7, maxWidth: '620px', marginBottom: '2rem' }}>
-              Each month, Inked sets aside a writer pool from platform revenue. Your share of that pool is proportional to your engagement score — calculated from real reader behavior, not algorithmic boosts or pay-to-promote mechanics.
+              Each month, NewsOnTip sets aside a writer pool from platform revenue. Your share of that pool is proportional to your engagement score — calculated from real reader behavior, not algorithmic boosts or pay-to-promote mechanics.
             </p>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1px', background: 'var(--rule-gray)', border: '1px solid var(--rule-gray)', marginBottom: '2rem' }}>
               {[
                 { signal: 'Read Time', weight: 'High', note: 'Minutes spent — the clearest signal of genuine value' },
                 { signal: 'Saves / Bookmarks', weight: 'High', note: 'Reader explicitly marks your piece as worth keeping' },
-                { signal: 'In-app Shares', weight: 'Medium', note: 'Organic sharing within the Inked platform' },
+                { signal: 'In-app Shares', weight: 'Medium', note: 'Organic sharing within the NewsOnTip platform' },
                 { signal: 'Return Visits', weight: 'Medium', note: 'Reader comes back to your profile for more' },
                 { signal: 'Comments', weight: 'Low', note: 'Engagement signal, lower weight to prevent gaming' },
                 { signal: 'External Clicks', weight: 'Excluded', note: 'We only count what happens inside the app' },
@@ -144,7 +144,7 @@ export default function Writers({ theme, toggleTheme }) {
         {/* Writer signup */}
         <RevealSection>
           <section style={{ maxWidth: '480px' }}>
-            <p className="eyebrow" style={{ marginBottom: '0.75rem' }}>Apply to write on Inked</p>
+            <p className="eyebrow" style={{ marginBottom: '0.75rem' }}>Apply to write on NewsOnTip</p>
             <hr className="rule" style={{ marginBottom: '1.5rem' }} />
             {submitted ? (
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.7rem', color: 'var(--success-green)', fontWeight: 600 }}>
