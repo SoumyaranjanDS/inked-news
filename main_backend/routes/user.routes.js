@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const Article = require("../models/Article");
 
 // GET /api/user/profile/:id
 router.get("/profile/:id", async (req, res) => {
@@ -39,12 +40,37 @@ router.post("/bookmarks", async (req, res) => {
     );
 
     let isBookmarked = false;
+    let dbArticle = null;
+    
+    // Attempt to find the article in the database to update its save count
+    if (article._id) {
+      dbArticle = await Article.findById(article._id);
+    } else if (article.link) {
+      dbArticle = await Article.findOne({ link: article.link });
+    }
+
     if (existsIndex > -1) {
       user.savedArticles.splice(existsIndex, 1);
       isBookmarked = false;
+      
+      if (dbArticle) {
+        dbArticle.saveCount = Math.max(0, (dbArticle.saveCount || 1) - 1);
+        // If no longer saved by anyone, restore expiration (e.g. expire in 48 hours from now)
+        if (dbArticle.saveCount === 0) {
+          dbArticle.expireAt = new Date(Date.now() + 48 * 60 * 60 * 1000);
+        }
+        await dbArticle.save();
+      }
     } else {
       user.savedArticles.unshift(article);
       isBookmarked = true;
+      
+      if (dbArticle) {
+        dbArticle.saveCount = (dbArticle.saveCount || 0) + 1;
+        // Unset expiration so it's kept forever
+        dbArticle.expireAt = undefined;
+        await dbArticle.save();
+      }
     }
 
     await user.save();
