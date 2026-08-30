@@ -473,7 +473,7 @@ export default function Home({ theme, toggleTheme }) {
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-400 font-serif font-medium text-xs">
-                            INKED
+                            NEWSONTIP
                           </div>
                         )}
                         <span className="absolute top-2.5 left-2.5 bg-neutral-900/80 backdrop-blur-md text-white text-[9px] font-medium px-2 py-0.5 rounded-full uppercase tracking-wider">
@@ -548,7 +548,7 @@ export default function Home({ theme, toggleTheme }) {
                           />
                         ) : (
                           <div className="w-full h-full bg-gradient-to-tr from-gray-100 to-gray-200 flex items-center justify-center text-gray-400 font-serif font-medium">
-                            INKED NEWS ARCHIVE
+                            NEWSONTIP NEWS ARCHIVE
                           </div>
                         )}
                         <div className="absolute top-4 left-4 flex gap-2">
@@ -629,7 +629,7 @@ export default function Home({ theme, toggleTheme }) {
               {!hasMore && displayedArticles.length > 0 && (
                 <div className="text-center py-12 border-t border-gray-200 mt-12 font-sans">
                   <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gray-100 text-gray-500 text-xs font-medium uppercase tracking-wider">
-                    <Sparkles size={13} className="text-red-600" /> You're all caught up • Inked Global Wire
+                    <Sparkles size={13} className="text-red-600" /> You're all caught up • NewsOnTip Global Wire
                   </span>
                 </div>
               )}
