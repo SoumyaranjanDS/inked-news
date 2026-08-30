@@ -69,7 +69,8 @@ router.get("/feed", async (req, res) => {
     const articles = await Article.find(query)
       .sort({ _id: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .populate('comments.user', 'name avatar');
 
     res.json({ success: true, data: articles });
   } catch (error) {
@@ -116,15 +117,27 @@ router.get("/trending", async (req, res) => {
       }
     }
 
-    let articles = await Article.find(query).sort({ _id: -1 }).limit(limit);
+    let articles = await Article.find(query).sort({ _id: -1 }).limit(limit).populate('comments.user', 'name avatar');
 
     if (articles.length === 0) {
       articles = await Article.find({ image_link: { $regex: /^http/ } })
         .sort({ _id: -1 })
-        .limit(limit);
+        .limit(limit)
+        .populate('comments.user', 'name avatar');
     }
 
     res.json({ success: true, data: articles });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ── GET /api/article/:id ──────────────────────────────────────────────────────────
+router.get("/article/:id", async (req, res) => {
+  try {
+    const article = await Article.findById(req.params.id).populate('comments.user', 'name avatar');
+    if (!article) return res.status(404).json({ success: false, error: "Article not found" });
+    res.json({ success: true, data: article });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
   }
@@ -164,7 +177,8 @@ router.get("/interests", async (req, res) => {
         _id: { $nin: articles.map((a) => a._id) },
       })
         .sort({ _id: -1 })
-        .limit(limitNeeded);
+        .limit(limitNeeded)
+        .populate('comments.user', 'name avatar');
 
       for (let f of fallbackArticles) {
         let fObj = f.toObject();
