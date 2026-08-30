@@ -76,8 +76,8 @@ def trigger_scrape(
                 db = client['scraper']
             collection = db['articles']
 
-            # Create TTL Index (Expires documents 48 hours after created_at)
-            collection.create_index("created_at", expireAfterSeconds=172800)
+            # Create TTL Index (Expires documents 48 hours after expireAt)
+            collection.create_index("expireAt", expireAfterSeconds=0)
 
             api_articles = fetch_all_api_sources(limit_per_source=100)
             inserted = 0
@@ -88,7 +88,8 @@ def trigger_scrape(
                         {
                             '$set': article,
                             '$setOnInsert': {
-                                'created_at': datetime.datetime.now(datetime.timezone.utc),
+                                "created_at": datetime.datetime.now(datetime.timezone.utc),
+                                "expireAt": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=48),
                                 'transformed': False
                             }
                         },
