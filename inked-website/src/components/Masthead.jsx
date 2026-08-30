@@ -307,7 +307,7 @@ export default function Masthead({ theme: _theme, toggleTheme: _toggleTheme }) {
 
             <Link to="/" className="inline-flex items-center gap-1 group no-underline">
               <span className="font-sans font-semibold text-2xl tracking-tight text-neutral-900 group-hover:text-red-700 transition-colors">
-                inked<span className="text-red-600">.</span>
+                newsontip<span className="text-red-600">.</span>
               </span>
             </Link>
 
@@ -399,7 +399,7 @@ export default function Masthead({ theme: _theme, toggleTheme: _toggleTheme }) {
             <div className="flex flex-col items-center justify-center text-center">
               <Link to="/" className="inline-flex items-center gap-1 group no-underline">
                 <span className="font-sans font-semibold text-3xl sm:text-4xl lg:text-5xl tracking-tight text-neutral-900 group-hover:text-red-700 transition-colors leading-none">
-                  inked<span className="text-red-600">.</span>
+                  newsontip<span className="text-red-600">.</span>
                 </span>
               </Link>
               <p className="hidden md:block text-[9px] uppercase tracking-[0.25em] text-gray-500 font-medium mt-1 leading-none text-center">
@@ -544,7 +544,7 @@ export default function Masthead({ theme: _theme, toggleTheme: _toggleTheme }) {
                 className="inline-flex items-center gap-1 group no-underline"
               >
                 <span className="font-sans font-semibold text-4xl sm:text-5xl lg:text-6xl tracking-tight text-neutral-900 group-hover:text-red-700 transition-colors leading-none">
-                  inked<span className="text-red-600">.</span>
+                  newsontip<span className="text-red-600">.</span>
                 </span>
               </Link>
               <p className="hidden md:block text-[10px] uppercase tracking-[0.25em] text-gray-500 font-medium mt-1.5 leading-none text-center">
