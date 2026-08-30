@@ -60,21 +60,21 @@ export default function AdminDashboard({ _theme }) {
         setConfig(res.data.data);
         setIsAuthenticated(true);
         setPassword(token);
-        localStorage.setItem('inked_admin_token', token);
+        localStorage.setItem('newsontip_admin_token', token);
         fetchLogs(token);
         fetchUsers(token);
         fetchScrapedArticles(token);
         return true;
       }
     } catch (_err) {
-      localStorage.removeItem('inked_admin_token');
+      localStorage.removeItem('newsontip_admin_token');
     }
     return false;
   };
 
   // Restore session across file changes / HMR / page reloads
   useEffect(() => {
-    const savedToken = localStorage.getItem('inked_admin_token');
+    const savedToken = localStorage.getItem('newsontip_admin_token');
     if (savedToken) {
       verifyAndLogin(savedToken).finally(() => {
         setIsVerifyingSession(false);
@@ -99,7 +99,7 @@ export default function AdminDashboard({ _theme }) {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('inked_admin_token');
+    localStorage.removeItem('newsontip_admin_token');
     setIsAuthenticated(false);
     setPassword('');
     setConfig(null);
@@ -243,7 +243,7 @@ export default function AdminDashboard({ _theme }) {
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-3">
               <span className="font-serif font-medium text-3xl sm:text-4xl text-neutral-900 tracking-tight">
-                INKED<span className="text-red-600">.</span>
+                NEWSONTIP<span className="text-red-600">.</span>
               </span>
               <span className="text-xs bg-red-50 text-red-700 font-semibold px-3 py-1 rounded-full border border-red-200">
                 ADMIN COCKPIT
@@ -337,7 +337,7 @@ export default function AdminDashboard({ _theme }) {
           {/* Bottom Security Notice */}
           <div className="relative z-10 text-[11px] text-gray-500 flex items-center gap-2 pt-4 border-t border-gray-200 font-normal font-sans">
             <Lock size={13} className="text-red-600" />
-            <span>Secure Admin Gateway • Bearer Token Auth • Inked Network</span>
+            <span>Secure Admin Gateway • Bearer Token Auth • NewsOnTip Network</span>
           </div>
 
         </div>
@@ -481,7 +481,7 @@ export default function AdminDashboard({ _theme }) {
           <div className="flex items-center gap-4">
             <Link to="/" className="flex items-center gap-1.5 no-underline">
               <span className="font-serif font-medium text-2xl text-neutral-900 tracking-tight">
-                INKED<span className="text-red-600">.</span>
+                NEWSONTIP<span className="text-red-600">.</span>
               </span>
             </Link>
             <span className="text-gray-300 hidden sm:inline">/</span>
