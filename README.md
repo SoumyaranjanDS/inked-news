@@ -1,14 +1,64 @@
-# Inked News 📰
+<div align="center">
+  <img src="https://cdn-icons-png.flaticon.com/512/2965/2965879.png" alt="NewsOnTip Logo" width="120" />
+  <h1>NewsOnTip 📰</h1>
+  <p><em>An intelligent, full-stack news aggregator and personalized reading platform.</em></p>
+  
+  [![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
+  [![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
+  [![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+  [![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://mongodb.com/)
+</div>
 
-An intelligent, full-stack news aggregator and personalized reading platform. **Inked News** scrapes thousands of articles daily, uses AI to optimize and summarize them, and serves them through a beautiful React Native mobile app and a sleek web platform.
+---
+
+**NewsOnTip** scrapes thousands of articles daily, uses AI to optimize and summarize them, and serves them through a beautiful React Native mobile app and a sleek web platform.
 
 ## 🏗️ Project Architecture
 
 This monorepo is divided into five distinct microservices/applications, representing a complete end-to-end data pipeline and user experience.
 
+```mermaid
+graph TD
+    subgraph Frontend Clients
+        Mobile[📱 NewsOnTip Mobile App<br/>React Native]
+        Web[💻 NewsOnTip Web Platform<br/>React & Vite]
+    end
+
+    subgraph Backend Infrastructure
+        Gateway[🚀 API Gateway & Serving<br/>Node.js / Express]
+        
+        subgraph Data Pipeline
+            Scraper[🕷️ Scraper Engine<br/>Python / FastAPI]
+            Optimizer[🧠 AI Optimizer<br/>Python / FastAPI]
+        end
+        
+        DBMain[(🗄️ Main DB<br/>MongoDB)]
+        DBRaw[(🗑️ Raw DB<br/>MongoDB)]
+    end
+
+    Mobile <-->|REST / Socket.io| Gateway
+    Web <-->|REST| Gateway
+    Gateway <-->|Read / Write| DBMain
+    Gateway -.->|Triggers Orchestration| Scraper
+
+    Scraper -->|Scrapes Web & RSS| DBRaw
+    Optimizer -->|Polls & Cleans| DBRaw
+    Optimizer -->|Pushes Production Data| DBMain
+
+    style Mobile fill:#20232a,stroke:#61dafb,stroke-width:2px,color:#fff
+    style Web fill:#20232a,stroke:#61dafb,stroke-width:2px,color:#fff
+    style Gateway fill:#333,stroke:#43853d,stroke-width:2px,color:#fff
+    style Scraper fill:#3776ab,stroke:#ffd43b,stroke-width:2px,color:#fff
+    style Optimizer fill:#3776ab,stroke:#ffd43b,stroke-width:2px,color:#fff
+    style DBMain fill:#4ea94b,stroke:#fff,stroke-width:2px,color:#fff
+    style DBRaw fill:#4ea94b,stroke:#fff,stroke-width:2px,color:#fff
+```
+
+### Microservices Overview
+
 1. **`inked/`** (Mobile App)
    - A cross-platform mobile application built with **React Native / Expo**. 
-   - Features a dynamic onboarding carousel, personalized interest selection, and a tailored news feed.
+   - Features a dynamic onboarding carousel, personalized interest selection, real-time interactions via Socket.io, and a tailored news feed.
 
 2. **`inked-website/`** (Web Frontend)
    - A fast, modern web application built with **React & Vite**.
@@ -17,6 +67,7 @@ This monorepo is divided into five distinct microservices/applications, represen
 3. **`main_backend/`** (API Gateway & Serving Layer)
    - A **Node.js / Express** server.
    - Handles all client-facing API requests (fetching trending news, user feeds, orchestrating scrapes).
+   - Powers real-time live updates using Socket.io.
    - Connects to the `main` MongoDB database.
 
 4. **`scraper_backend/`** (Data Collection Engine)
@@ -32,22 +83,54 @@ This monorepo is divided into five distinct microservices/applications, represen
 
 ## 🚀 The Data Pipeline
 
-The magic of Inked News happens in the background. The flow works as follows:
+The magic of NewsOnTip happens in the background. The flow works as follows:
 
-1. **Orchestration**: A POST request to the `main_backend` (`/api/orchestrate`) triggers the pipeline.
-2. **Scraping**: `scraper_backend` wakes up, crawls RSS feeds and News APIs, and saves raw data.
-3. **Optimization**: Immediately after, the `optimizer_engine` kicks in, filtering out bad data, standardizing formats, and moving high-quality articles to the live database.
-4. **Delivery**: Users on the mobile app or website fetch this polished data instantly!
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Client as User / Admin
+    participant MainAPI as Node.js Gateway
+    participant Scraper as Python Scraper
+    participant DB_Raw as Raw MongoDB
+    participant Optimizer as AI Optimizer
+    participant DB_Main as Live MongoDB
+    
+    Client->>MainAPI: POST /api/orchestrate
+    MainAPI->>Scraper: Trigger Scrape Sequence
+    Scraper->>Internet: Fetch RSS & News APIs
+    Internet-->>Scraper: HTML / XML Data
+    Scraper->>DB_Raw: Store Unstructured Data
+    
+    loop Background Cron
+        Optimizer->>DB_Raw: Poll for new articles
+        Optimizer->>Optimizer: Filter junk & Summarize AI
+        Optimizer->>DB_Main: Store Production Ready Articles
+    end
+    
+    MainAPI->>DB_Main: Fetch clean data
+    MainAPI-->>Client: Serve personalized feed
+```
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: React Native, Expo, React.js, Vite, TailwindCSS (for web).
-- **Backend APIs**: Node.js, Express, Python, FastAPI.
-- **Scraping**: Scrapy, Feedparser, BeautifulSoup.
-- **Database**: MongoDB (Atlas).
-- **Tooling**: npm, pip, git.
+<div align="center">
+  <table>
+    <tr>
+      <td align="center"><strong>Frontend</strong></td>
+      <td align="center"><strong>Backend APIs</strong></td>
+      <td align="center"><strong>Data & Scraping</strong></td>
+      <td align="center"><strong>DevOps & Infra</strong></td>
+    </tr>
+    <tr>
+      <td>React Native<br/>React.js<br/>Vite<br/>TailwindCSS</td>
+      <td>Node.js<br/>Express<br/>Socket.io<br/>Python FastAPI</td>
+      <td>MongoDB Atlas<br/>Scrapy<br/>Feedparser<br/>BeautifulSoup</td>
+      <td>npm / yarn<br/>pip<br/>Git</td>
+    </tr>
+  </table>
+</div>
 
 ---
 
@@ -113,8 +196,16 @@ npm run dev
 ---
 
 ## 📝 Triggering a Manual Scrape
+
 Once all backends are running, you can manually trigger the AI pipeline to fetch the latest news by hitting your main backend:
+
 ```bash
 curl -X POST http://localhost:5000/api/orchestrate
 ```
+
 Watch the terminal logs as the scraper fetches the articles and the optimizer processes them into your live database!
+
+<div align="center">
+  <br/>
+  <p>Made with ❤️ for modern news readers.</p>
+</div>
