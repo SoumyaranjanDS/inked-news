@@ -12,8 +12,29 @@ const adminRoutes = require("./routes/admin.routes");
 const marketingRoutes = require("./routes/marketing.routes");
 const interactionRoutes = require("./routes/interaction.routes");
 
+const http = require("http");
+const { Server } = require("socket.io");
+
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+// Create HTTP server for Socket.io
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*", // allow all origins for the app
+    methods: ["GET", "POST"]
+  }
+});
+app.set('io', io);
+
+io.on('connection', (socket) => {
+  console.log('⚡ Client connected:', socket.id);
+  socket.on('disconnect', () => {
+    console.log('⚡ Client disconnected:', socket.id);
+  });
+});
+
 
 // Middleware
 const corsOptions = {
@@ -39,7 +60,7 @@ app.use("/api", marketingRoutes);
 // Connect to Database & Start Server
 const startServer = async () => {
   await connectDB();
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log(
       `🚀 Main Backend Serving API running on http://localhost:${PORT}`,
     );
