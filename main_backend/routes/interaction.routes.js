@@ -51,6 +51,19 @@ router.post("/like/:articleId", requireAuth, async (req, res) => {
     await article.save();
     await user.save();
 
+    // Emit socket event for real-time updates
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('article_updated', {
+        articleId,
+        type: 'like',
+        delta: isLiked ? 1 : -1,
+        likes: article.likes,
+        headline: article.headline,
+        senderId: userId
+      });
+    }
+
     res.json({ success: true, isLiked, likes: article.likes });
   } catch (error) {
     res.status(500).json({ success: false, error: error.message });
@@ -68,6 +81,17 @@ router.post("/share/:articleId", async (req, res) => {
     );
     
     if (!article) return res.status(404).json({ success: false, error: "Article not found" });
+
+    // Emit socket event
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('article_updated', {
+        articleId,
+        type: 'share',
+        delta: 1,
+        shares: article.shares
+      });
+    }
 
     res.json({ success: true, shares: article.shares });
   } catch (error) {
@@ -101,6 +125,24 @@ router.post("/comment/:articleId", requireAuth, async (req, res) => {
     // Populate user info before returning
     await article.populate('comments.user', 'name avatar');
     const addedComment = article.comments[article.comments.length - 1];
+
+    // Emit socket event
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('article_updated', {
+        articleId,
+        type: 'comment',
+        delta: 1,
+        commentsCount: article.comments.length,
+        senderId: userId
+      });
+      // Emit in-app notification event globally (for active users)
+      io.emit('in_app_notification', {
+        title: "New Comment",
+        body: `Someone just commented on "${article.headline.substring(0, 30)}..."`,
+        articleId
+      });
+    }
 
     res.json({ success: true, comment: addedComment, commentCount: article.comments.length });
   } catch (error) {
@@ -141,6 +183,17 @@ router.post("/share/:articleId", async (req, res) => {
     );
 
     if (!article) return res.status(404).json({ success: false, error: "Article not found" });
+
+    // Emit socket event
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('article_updated', {
+        articleId,
+        type: 'share',
+        delta: 1,
+        shares: article.shares
+      });
+    }
 
     res.json({ success: true, shares: article.shares });
   } catch (error) {
