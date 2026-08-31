@@ -74,6 +74,21 @@ router.post("/bookmarks", async (req, res) => {
     }
 
     await user.save();
+
+    // Emit socket event for real-time updates
+    if (dbArticle) {
+      const io = req.app.get('io');
+      if (io) {
+        io.emit('article_updated', {
+          articleId: dbArticle._id.toString(),
+          type: 'save',
+          delta: isBookmarked ? 1 : -1,
+          saves: dbArticle.saveCount,
+          senderId: userId
+        });
+      }
+    }
+
     res.json({
       success: true,
       isBookmarked,
