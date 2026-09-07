@@ -124,7 +124,7 @@ sequenceDiagram
       <td align="center"><strong>DevOps & Infra</strong></td>
     </tr>
     <tr>
-      <td>React Native<br/>React.js<br/>Vite<br/>TailwindCSS</td>
+      <td>React Native<br/>React.js<br/>Vite<br/>TailwindCSSV4</td>
       <td>Node.js<br/>Express<br/>Socket.io<br/>Python FastAPI</td>
       <td>MongoDB Atlas<br/>Scrapy<br/>Feedparser<br/>BeautifulSoup</td>
       <td>npm / yarn<br/>pip<br/>Git</td>
