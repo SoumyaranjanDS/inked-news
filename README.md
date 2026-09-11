@@ -1,7 +1,7 @@
 <div align="center">
   <img src="https://cdn-icons-png.flaticon.com/512/2965/2965879.png" alt="NewsOnTip Logo" width="120" />
   <h1>NewsOnTip 📰</h1>
-  <p><em>An intelligent, full-stack news aggregator and personalized reading platform.</em></p>
+  <p><em>An intelligent, full stack news aggregator and personalized reading platform.</em></p>
   
   [![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
   [![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
