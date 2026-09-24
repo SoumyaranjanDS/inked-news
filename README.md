@@ -25,7 +25,7 @@ graph TD
     end
 
     subgraph Backend Infrastructure
-        Gateway[🚀 API Gateway & Serving<br/>Node.js / Express]
+        Gateway[API Gateway & Serving<br/>Node.js / Express]
         
         subgraph Data Pipeline
             Scraper[🕷️ Scraper Engine<br/>Python / FastAPI]
